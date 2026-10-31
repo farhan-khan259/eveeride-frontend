@@ -579,10 +579,6 @@ function Dashboard() {
               <span>Withdrawable</span>
               <b>{rupees(d.withdrawable)}</b>
             </div>
-            <div>
-              <span>Pending withdrawal</span>
-              <b>{rupees(d.pending)}</b>
-            </div>
           </div>
           <div className="balance-foot">
             <ShieldCheck size={15} />
@@ -2573,9 +2569,17 @@ function AdminUsers() {
 function AdminRequests({ withdrawal = false }) {
   const endpoint = "/admin/" + (withdrawal ? "withdrawals" : "deposits"),
     { data, error } = useData(endpoint, []),
+    [statusFilter, setStatusFilter] = useState("pending"),
     [record, setRecord] = useState(null),
     [proof, setProof] = useState(null),
     { action, tell } = useApp();
+  const requestStatuses = withdrawal
+      ? ["pending", "approved", "completed", "rejected", "all"]
+      : ["pending", "approved", "rejected", "all"],
+    visibleRequests =
+      statusFilter === "all"
+        ? data
+        : data.filter((request) => request.status === statusFilter);
   async function copyAccountNumber(value) {
     if (!value) return;
     try {
@@ -2600,6 +2604,11 @@ function AdminRequests({ withdrawal = false }) {
     },
     [proof],
   );
+  useEffect(() => {
+    setStatusFilter("pending");
+    setRecord(null);
+    setProof(null);
+  }, [withdrawal]);
   return (
     <>
       <PageTitle
@@ -2611,8 +2620,33 @@ function AdminRequests({ withdrawal = false }) {
         }
       />
       <ErrorState error={error} />
+      <div className="request-tabs" role="tablist" aria-label="Request status">
+        {requestStatuses.map((status) => {
+          const count =
+            status === "all"
+              ? data.length
+              : data.filter((request) => request.status === status).length;
+          return (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={statusFilter === status}
+              className={statusFilter === status ? "active" : ""}
+              onClick={() => {
+                setStatusFilter(status);
+                setRecord(null);
+                setProof(null);
+              }}
+              key={status}
+            >
+              {status[0].toUpperCase() + status.slice(1)}
+              <span>{count}</span>
+            </button>
+          );
+        })}
+      </div>
       <Card>
-        {data.length ? (
+        {visibleRequests.length ? (
           <div className="table-wrap">
             <table>
               <thead>
@@ -2633,7 +2667,7 @@ function AdminRequests({ withdrawal = false }) {
                 </tr>
               </thead>
               <tbody>
-                {data.map((d) => (
+                {visibleRequests.map((d) => (
                   <tr key={d._id}>
                     <td>{d.user?.email}</td>
                     <td>{rupees(d.amount)}</td>
@@ -2682,7 +2716,11 @@ function AdminRequests({ withdrawal = false }) {
             </table>
           </div>
         ) : (
-          <Empty title="No requests to review" />
+          <Empty
+            title={`No ${statusFilter === "all" ? "" : statusFilter + " "}${
+              withdrawal ? "withdrawals" : "deposits"
+            }`}
+          />
         )}
       </Card>
       {record && (

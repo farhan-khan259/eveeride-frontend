@@ -1789,6 +1789,44 @@ td small {
 .admin-main .stat-grid {
   margin-bottom: 25px;
 }
+.request-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.request-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.request-tabs button span {
+  min-width: 20px;
+  padding: 2px 6px;
+  border-radius: 20px;
+  background: #edf4f7;
+  color: #55727f;
+  text-align: center;
+  font-size: 9px;
+}
+.request-tabs button:hover,
+.request-tabs button.active {
+  border-color: #9edce9;
+  background: var(--pale);
+  color: var(--ocean);
+}
+.request-tabs button.active span {
+  background: var(--ocean);
+  color: #fff;
+}
 .admin-main .content-grid {
   grid-template-columns: 1fr 1fr;
 }
