@@ -535,7 +535,9 @@ function MoneyStat({ icon: Icon, label, value, description }) {
   );
 }
 const WHATSAPP_CHANNEL =
-  "https://whatsapp.com/channel/0029VbEJyKw2975BrU2C0a3E";
+    "https://whatsapp.com/channel/0029VbEJyKw2975BrU2C0a3E",
+  WHATSAPP_SUPPORT = "https://wa.me/92333456789",
+  SUPPORT_EMAIL = "eveerideofficial@gmail.com";
 const UPCOMING_PLAN_UNLOCK_AT = Date.parse("2026-11-10T23:59:59+05:00");
 function WhatsAppChannel({ promo = false }) {
   return (
@@ -2020,33 +2022,71 @@ function Notifications() {
   );
 }
 function Support() {
-  const { pub } = useApp();
   return (
     <>
       <PageTitle
-        title="Here to help you move forward."
+        title="EveeRide Support"
         eyebrow="HELP & SUPPORT"
+        description="Contact our team, follow official updates, and keep your account secure."
       />
-      <div className="content-grid">
-        <Card>
-          <Headphones size={34} className="cyan" />
-          <h2>Contact support</h2>
-          {pub?.support ? (
-            <a className="text-link" href={"mailto:" + pub.support}>
-              {pub.support}
-            </a>
-          ) : (
-            <p>Support email is currently unavailable.</p>
-          )}
+      <div className="support-contact-grid">
+        <section className="support-contact-card customer-service-card">
+          <span className="support-contact-icon">
+            <Headphones size={28} />
+          </span>
+          <span className="eyebrow">CUSTOMER SERVICE</span>
+          <h2>Talk to EveeRide Support</h2>
           <p>
-            For a payment question, include the request ID and transaction
-            reference. Never share a password or reset link.
+            Get help with your account, deposits, withdrawals, plans, or tasks
+            through our official support number.
           </p>
-          <Link className="text-link" to="/activity">
-            Find a transaction <ArrowRight size={16} />
-          </Link>
-        </Card>
-        
+          <a
+            className="support-action"
+            href={WHATSAPP_SUPPORT}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MessageCircle size={18} />
+            Contact customer service
+            <ExternalLink size={15} />
+          </a>
+          <a className="support-email" href={`mailto:${SUPPORT_EMAIL}`}>
+            <Mail size={16} />
+            {SUPPORT_EMAIL}
+          </a>
+        </section>
+        <section className="support-contact-card official-channel-card">
+          <span className="support-contact-icon">
+            <MessageCircle size={28} />
+          </span>
+          <span className="eyebrow">OFFICIAL WHATSAPP CHANNEL</span>
+          <h2>Announcements, promo codes and updates</h2>
+          <p>
+            Follow the official EveeRide channel for platform news, new promo
+            codes, service notices, and important updates.
+          </p>
+          <a
+            className="support-action"
+            href={WHATSAPP_CHANNEL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MessageCircle size={18} />
+            Join channel
+            <ExternalLink size={15} />
+          </a>
+        </section>
+      </div>
+      <div className="support-trust-note">
+        <ShieldCheck size={22} />
+        <div>
+          <b>Stay safe</b>
+          <p>
+            Only trust messages from the official channel, customer-service
+            number, and support email shown on this page. EveeRide support will
+            never ask for your password or password-reset link.
+          </p>
+        </div>
       </div>
     </>
   );
