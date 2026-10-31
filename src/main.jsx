@@ -45,6 +45,7 @@ import {
   Eye,
   Lock,
   Mail,
+  MessageCircle,
   LoaderCircle,
   CheckCircle2,
   AlertCircle,
@@ -533,6 +534,40 @@ function MoneyStat({ icon: Icon, label, value, description }) {
     </Card>
   );
 }
+const WHATSAPP_CHANNEL =
+  "https://whatsapp.com/channel/0029VbEJyKw2975BrU2C0a3E";
+function WhatsAppChannel({ promo = false }) {
+  return (
+    <a
+      className="whatsapp-channel"
+      href={WHATSAPP_CHANNEL}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Join the official EveeRide WhatsApp channel"
+    >
+      <span className="whatsapp-channel-icon">
+        <MessageCircle size={27} />
+        <i />
+      </span>
+      <span className="whatsapp-channel-copy">
+        <small>OFFICIAL EVEERIDE CHANNEL</small>
+        <strong>
+          {promo
+            ? "Join WhatsApp channel for promo codes"
+            : "Join our official WhatsApp channel"}
+        </strong>
+        <span>
+          {promo
+            ? "Get new promo codes and reward updates in one place."
+            : "Get announcements, updates and promo drops."}
+        </span>
+      </span>
+      <span className="whatsapp-channel-action">
+        Join now <ArrowUpRight size={18} />
+      </span>
+    </a>
+  );
+}
 function Dashboard() {
   const { user } = useApp(),
     { data: d, loading, error } = useData("/dashboard", blank, 10000),
@@ -633,6 +668,7 @@ function Dashboard() {
           description="One-time milestone rewards"
         />
       </div>
+      <WhatsAppChannel />
       <section className="banner">
         <div>
           <div className="eyebrow">
@@ -1652,6 +1688,7 @@ function Promo() {
         eyebrow="PROMO REWARDS"
         description="Claim an active code with an eligible paid plan."
       />
+      <WhatsAppChannel promo />
       <Card className="promo-card">
         <span className="promo-icon">
           <Gift size={45} />

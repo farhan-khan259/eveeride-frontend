@@ -517,6 +517,120 @@ main {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
+.whatsapp-channel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 112px;
+  margin: 0 0 24px;
+  padding: 22px 26px;
+  border: 1px solid #79d5e7;
+  border-radius: 17px;
+  background: linear-gradient(115deg, #053e5d 0%, #047b9a 52%, #09b8d4 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 12px 30px rgba(4, 93, 121, 0.16);
+}
+.whatsapp-channel::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 240px;
+  height: 240px;
+  right: 12%;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 50%;
+  box-shadow: 0 0 0 42px rgba(255, 255, 255, 0.035);
+}
+.whatsapp-channel-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: #fff;
+  color: #0598b5;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 20px rgba(0, 35, 54, 0.18);
+}
+.whatsapp-channel-icon i {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  right: 7px;
+  top: 7px;
+  border-radius: 50%;
+  background: #32d583;
+  border: 2px solid #fff;
+}
+.whatsapp-channel-copy {
+  flex: 1;
+  min-width: 0;
+}
+.whatsapp-channel-copy small,
+.whatsapp-channel-copy strong,
+.whatsapp-channel-copy > span {
+  display: block;
+}
+.whatsapp-channel-copy small {
+  margin-bottom: 5px;
+  color: #a6edf6;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.7px;
+}
+.whatsapp-channel-copy strong {
+  font: 700 19px Manrope, sans-serif;
+}
+.whatsapp-channel-copy > span {
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 10px;
+}
+.whatsapp-channel-action {
+  flex: 0 0 auto;
+  padding: 12px 17px;
+  border-radius: 10px;
+  background: #fff;
+  color: #075f78;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.whatsapp-channel:hover .whatsapp-channel-action {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 40, 57, 0.17);
+}
+@media (max-width: 600px) {
+  .whatsapp-channel {
+    min-height: 0;
+    padding: 18px;
+    gap: 13px;
+    flex-wrap: wrap;
+  }
+  .whatsapp-channel-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+  }
+  .whatsapp-channel-copy {
+    width: calc(100% - 63px);
+  }
+  .whatsapp-channel-copy strong {
+    font-size: 15px;
+  }
+  .whatsapp-channel-action {
+    width: 100%;
+    justify-content: center;
+    margin-top: 3px;
+  }
+}
 .stat {
   position: relative;
   padding: 22px;
