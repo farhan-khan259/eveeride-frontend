@@ -1671,6 +1671,68 @@ td small {
 .profile p {
   margin: 0;
 }
+.account-security {
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+.account-security-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.account-security-head > div {
+  flex: 1;
+}
+.account-security-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.account-security-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+.password-form {
+  margin-top: 20px;
+  padding: 22px;
+  border: 1px solid #d9eaf0;
+  border-radius: 12px;
+  background: #f8fcfd;
+}
+.password-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.password-form .field {
+  margin: 0 0 17px;
+}
+.password-form > .field {
+  max-width: calc(50% - 8px);
+}
+.password-form .btn {
+  margin-top: 18px;
+}
+@media (max-width: 760px) {
+  .account-security-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .account-security-head .btn {
+    width: 100%;
+  }
+  .password-form {
+    padding: 17px;
+  }
+  .password-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .password-form > .field {
+    max-width: none;
+  }
+}
 .avatar.large {
   width: 70px;
   height: 70px;

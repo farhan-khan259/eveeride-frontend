@@ -1929,7 +1929,26 @@ function Activity({ admin = false }) {
   );
 }
 function Account() {
-  const { user, logout } = useApp();
+  const { user, logout, action, login, impersonating } = useApp(),
+    [editingPassword, setEditingPassword] = useState(false),
+    [savingPassword, setSavingPassword] = useState(false);
+  async function changePassword(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    setSavingPassword(true);
+    const result = await action(() =>
+      api.post(
+        "/account/password",
+        Object.fromEntries(new FormData(form)),
+      ),
+    );
+    if (result?.token) {
+      await login(result);
+      form.reset();
+      setEditingPassword(false);
+    }
+    setSavingPassword(false);
+  }
   return (
     <>
       <PageTitle title="Your account, at a glance." eyebrow="ACCOUNT" />
@@ -1957,10 +1976,61 @@ function Account() {
                 <dd>{user.status}</dd>
               </div>
             </dl>
+            {!impersonating && (
+              <section className="account-security">
+                <div className="account-security-head">
+                  <span className="square-icon">
+                    <Lock size={19} />
+                  </span>
+                  <div>
+                    <h3>Password & security</h3>
+                    <p>Use a strong, unique password for your EveeRide account.</p>
+                  </div>
+                  <Button
+                    secondary
+                    onClick={() => setEditingPassword((value) => !value)}
+                  >
+                    {editingPassword ? "Cancel" : "Edit password"}
+                  </Button>
+                </div>
+                {editingPassword && (
+                  <form className="password-form" onSubmit={changePassword}>
+                    <Field
+                      label="Old password"
+                      name="currentPassword"
+                      type="password"
+                      autoComplete="current-password"
+                      required
+                    />
+                    <div className="password-form-grid">
+                      <Field
+                        label="New password"
+                        name="newPassword"
+                        type="password"
+                        minLength={10}
+                        maxLength={100}
+                        autoComplete="new-password"
+                        required
+                      />
+                      <Field
+                        label="Confirm new password"
+                        name="confirmPassword"
+                        type="password"
+                        minLength={10}
+                        maxLength={100}
+                        autoComplete="new-password"
+                        required
+                      />
+                    </div>
+                    <small className="muted">
+                      Use at least 10 characters with uppercase, lowercase and a number.
+                    </small>
+                    <Submit busy={savingPassword}>Save password</Submit>
+                  </form>
+                )}
+              </section>
+            )}
             <div className="button-row">
-              <Link className="btn secondary" to="/forgot">
-                Reset password
-              </Link>
               <Button secondary onClick={logout}>
                 <LogOut size={16} />
                 Sign out
