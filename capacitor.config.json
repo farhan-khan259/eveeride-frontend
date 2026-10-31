@@ -1,0 +1,14 @@
+{
+  "appId": "com.example.taskreward",
+  "appName": "EveeRide",
+  "webDir": "../dist",
+  "android": { "path": "../android" },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#C2E4F4",
+      "showSpinner": false
+    }
+  },
+  "server": { "androidScheme": "https" }
+}
