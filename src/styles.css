@@ -275,6 +275,24 @@ main {
   white-space: nowrap;
   font-weight: 600;
 }
+.impersonation-banner {
+  min-height: 54px;
+  padding: 9px 28px;
+  background: #fff7df;
+  border-bottom: 1px solid #eedb9b;
+  color: #715916;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+}
+.impersonation-banner span { flex: 1; }
+.impersonation-banner .btn {
+  padding: 8px 12px;
+  background: #fff;
+  border-color: #dfc66f;
+  font-size: 10px;
+}
 .page-title {
   display: flex;
   align-items: center;

@@ -32,6 +32,7 @@ import {
   Gift,
   Crown,
   Wallet,
+  LogIn,
   LogOut,
   Menu,
   X,
@@ -59,7 +60,10 @@ function App() {
     [ready, setReady] = useState(false),
     [toast, setToast] = useState(null),
     [rev, setRev] = useState(0),
-    [pub, setPub] = useState(null);
+    [pub, setPub] = useState(null),
+    [impersonating, setImpersonating] = useState(
+      Boolean(sessionStorage.getItem("eveeride.admin.token")),
+    );
   const tell = (message, error = false) => {
     setToast({ message, error });
     setTimeout(() => setToast(null), 6000);
@@ -104,7 +108,34 @@ function App() {
     setUser(data.user);
     refresh();
   }
+  async function startImpersonation(data) {
+    const currentToken = sessionStorage.getItem("eveeride.token");
+    if (!currentToken || user?.role !== "admin") return false;
+    sessionStorage.setItem("eveeride.admin.token", currentToken);
+    sessionStorage.setItem("eveeride.admin.user", JSON.stringify(user));
+    sessionStorage.setItem("eveeride.token", data.token);
+    setUser(data.user);
+    setImpersonating(true);
+    refresh();
+    return true;
+  }
+  function returnToAdmin() {
+    const token = sessionStorage.getItem("eveeride.admin.token"),
+      saved = sessionStorage.getItem("eveeride.admin.user");
+    if (!token || !saved) return false;
+    sessionStorage.setItem("eveeride.token", token);
+    sessionStorage.removeItem("eveeride.admin.token");
+    sessionStorage.removeItem("eveeride.admin.user");
+    setUser(JSON.parse(saved));
+    setImpersonating(false);
+    refresh();
+    return true;
+  }
   async function logout() {
+    if (impersonating) {
+      returnToAdmin();
+      return;
+    }
     try {
       await api.post("/auth/logout");
     } catch {}
@@ -114,7 +145,19 @@ function App() {
   }
   return (
     <Context.Provider
-      value={{ user, pub, ready, rev, tell, action, login, logout }}
+      value={{
+        user,
+        pub,
+        ready,
+        rev,
+        tell,
+        action,
+        login,
+        logout,
+        impersonating,
+        startImpersonation,
+        returnToAdmin,
+      }}
     >
       <BrowserRouter>
         <Routes>
@@ -238,7 +281,7 @@ function Brand() {
   );
 }
 function Shell() {
-  const { user, pub, logout } = useApp(),
+  const { user, pub, logout, impersonating, returnToAdmin } = useApp(),
     [menu, setMenu] = useState(false);
   const location = useLocation();
   useEffect(() => {
@@ -280,6 +323,23 @@ function Shell() {
         </div>
       </aside>
       <div className="workspace">
+        {impersonating && (
+          <div className="impersonation-banner">
+            <Eye size={17} />
+            <span>
+              Viewing as <b>{user?.name}</b> · Read-only admin access
+            </span>
+            <Button
+              secondary
+              onClick={() => {
+                returnToAdmin();
+                window.location.assign("/admin/users");
+              }}
+            >
+              Return to admin
+            </Button>
+          </div>
+        )}
         <header>
           <button
             className="mobile-menu icon-btn"
@@ -2320,8 +2380,6 @@ function AdminDashboard() {
           ["Completed withdrawals", rupees(d.completedWithdrawals), "/admin/withdrawals"],
           ["Task rewards", rupees(d.taskRewards)],
           ["Commissions", rupees(d.commissions)],
-          ["One-time bonuses", rupees(d.bonuses)],
-          ["Pending rewards", rupees(d.liabilities)],
         ].map(([n, v, to]) => {
           const content = (
             <Card className={`compact-stat${to ? " clickable-stat" : ""}`}>
@@ -2413,12 +2471,13 @@ function AdminUsers() {
       "/admin/users?page=" + p + "&search=" + encodeURIComponent(query),
       { items: [], total: 0 },
     ),
-    [target, setTarget] = useState(null),
-    [support, setSupport] = useState(null),
-    { action } = useApp();
-  async function view(u) {
-    const r = await action(() => api.get("/admin/users/" + u._id));
-    if (r) setTarget(r);
+    { action, startImpersonation } = useApp(),
+    navigate = useNavigate();
+  async function accessUser(u) {
+    const session = await action(() =>
+      api.post(`/admin/users/${u._id}/impersonate`),
+    );
+    if (session && (await startImpersonation(session))) navigate("/");
   }
   return (
     <>
@@ -2469,8 +2528,13 @@ function AdminUsers() {
                     )}
                   </td>
                   <td>
-                    <Button secondary onClick={() => view(u)}>
-                      Review
+                    <Button
+                      secondary
+                      disabled={u.role === "admin" || u.status !== "active"}
+                      onClick={() => accessUser(u)}
+                    >
+                      <LogIn size={15} />
+                      {u.role === "admin" ? "Admin" : "Login"}
                     </Button>
                   </td>
                 </tr>
@@ -2492,85 +2556,6 @@ function AdminUsers() {
           </Button>
         </div>
       </Card>
-      {target && (
-        <Modal
-          title={"Review · " + target.user.name}
-          close={() => setTarget(null)}
-        >
-          <p>
-            {target.user.email} · {target.user.status}
-          </p>
-          <p>
-            Available: {rupees(target.available)} · Active plans:{" "}
-            {target.activePlans.length}
-          </p>
-          <details>
-            <summary>Referral relationships</summary>
-            <pre>{JSON.stringify(target.relationships, null, 2)}</pre>
-          </details>
-          <h3>Account status</h3>
-          <ApiForm
-            endpoint={`/admin/users/${target.user.id}/status`}
-            fields={[
-              ["status", "Status", "select", ["active", "suspended"]],
-              ["reason", "Reason"],
-            ]}
-            label="Update status"
-          />
-          <h3>Audited balance adjustment</h3>
-          <ApiForm
-            endpoint={`/admin/users/${target.user.id}/adjust`}
-            fields={[
-              ["type", "Adjustment", "select", ["credit", "debit"]],
-              ["amount", "Amount (PKR)", "number"],
-              ["reason", "Reason"],
-            ]}
-            transform={(b) => ({ ...b, requestId: crypto.randomUUID() })}
-            label="Record adjustment"
-          />
-          <h3>Read-only support session</h3>
-          <ApiForm
-            endpoint="/admin/support-sessions"
-            fields={[["reason", "Troubleshooting reason"]]}
-            transform={(b) => ({ ...b, user: target.user.id })}
-            label="Begin support session"
-            done={async (s) => {
-              const d = await action(() =>
-                api.get("/admin/support-sessions/" + s._id),
-              );
-              if (d) setSupport({ id: s._id, ...d });
-            }}
-          />
-          {support && (
-            <div className="support-session">
-              <b>ADMINISTRATIVE ACCESS · READ ONLY</b>
-              <p>Expires {when(support.expires)}</p>
-              <p>
-                {support.user.name} · {rupees(support.available)}
-              </p>
-              <TransactionList items={support.recent} />
-              <Button
-                onClick={async () => {
-                  await action(() =>
-                    api.delete("/admin/support-sessions/" + support.id),
-                  );
-                  setSupport(null);
-                }}
-              >
-                End support session
-              </Button>
-            </div>
-          )}
-          <h3>Recent financial records</h3>
-          <TransactionList items={target.recent} />
-          <h3>Audit history</h3>
-          {target.audits.map((a) => (
-            <p key={a._id}>
-              {a.action} · {a.reason} · {when(a.createdAt)}
-            </p>
-          ))}
-        </Modal>
-      )}
     </>
   );
 }
