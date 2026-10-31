@@ -2565,6 +2565,24 @@ function AdminRequests({ withdrawal = false }) {
     [record, setRecord] = useState(null),
     [proof, setProof] = useState(null),
     { action, tell } = useApp();
+  async function copyAccountNumber(value) {
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      tell("Account number copied");
+    } catch {
+      const input = document.createElement("textarea");
+      input.value = value;
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      const copied = document.execCommand("copy");
+      input.remove();
+      tell(copied ? "Account number copied" : "Could not copy account number.", !copied);
+    }
+  }
   useEffect(
     () => () => {
       if (proof) URL.revokeObjectURL(proof);
@@ -2591,8 +2609,15 @@ function AdminRequests({ withdrawal = false }) {
                   <th>User</th>
                   <th>Amount</th>
                   <th>Status</th>
+                  {withdrawal && (
+                    <>
+                      <th>Account name</th>
+                      <th>Account type</th>
+                      <th>Account number</th>
+                    </>
+                  )}
                   <th>Reference</th>
-                  <th>Date</th>
+                  <th className="date-cell">Date</th>
                   <th>Review</th>
                 </tr>
               </thead>
@@ -2604,8 +2629,31 @@ function AdminRequests({ withdrawal = false }) {
                     <td>
                       <Tag>{d.status}</Tag>
                     </td>
+                    {withdrawal && (
+                      <>
+                        <td>{d.account?.holder || "—"}</td>
+                        <td>{d.account?.type || "—"}</td>
+                        <td>
+                          <div className="account-number-cell">
+                            <span className="mono">{d.account?.number || "—"}</span>
+                            {d.account?.number && (
+                              <button
+                                type="button"
+                                className="detail-copy"
+                                onClick={() => copyAccountNumber(d.account.number)}
+                                aria-label="Copy account number"
+                                title="Copy account number"
+                              >
+                                <Copy size={14} />
+                                Copy
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </>
+                    )}
                     <td>{d.tid || d.paymentRef || "—"}</td>
-                    <td>{when(d.createdAt)}</td>
+                    <td className="date-cell">{when(d.createdAt)}</td>
                     <td>
                       <Button
                         secondary
@@ -2639,12 +2687,36 @@ function AdminRequests({ withdrawal = false }) {
           </p>
           {withdrawal ? (
             <dl className="details">
-              {Object.entries(record.account).map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
+              <div>
+                <dt>Account holder name</dt>
+                <dd>{record.account?.holder || "—"}</dd>
+              </div>
+              <div>
+                <dt>Account type</dt>
+                <dd>{record.account?.type || "—"}</dd>
+              </div>
+              <div>
+                <dt>Account number / IBAN</dt>
+                <dd>
+                  <span className="mono">{record.account?.number || "—"}</span>
+                  {record.account?.number && (
+                    <button
+                      type="button"
+                      className="detail-copy"
+                      onClick={() => copyAccountNumber(record.account.number)}
+                    >
+                      <Copy size={14} />
+                      Copy
+                    </button>
+                  )}
+                </dd>
+              </div>
+              {record.account?.bank && (
+                <div>
+                  <dt>Bank name</dt>
+                  <dd>{record.account.bank}</dd>
                 </div>
-              ))}
+              )}
             </dl>
           ) : (
             <>

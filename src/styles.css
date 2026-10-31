@@ -1197,6 +1197,16 @@ input[type="file"] {
   background: var(--pale);
   border-color: #bde7f0;
 }
+.account-number-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.date-cell {
+  min-width: 155px;
+  white-space: nowrap;
+}
 .payment-countdown {
   display: flex;
   gap: 10px;
