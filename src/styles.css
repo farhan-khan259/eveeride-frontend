@@ -235,6 +235,24 @@ header {
 .notification {
   border-left: 1px solid var(--line);
   padding-left: 24px;
+  position: relative;
+}
+.notification-badge {
+  position: absolute;
+  top: -3px;
+  right: -7px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 2px solid white;
+  border-radius: 999px;
+  background: var(--teal);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
 }
 .avatar {
   width: 35px;
@@ -1753,6 +1771,15 @@ td small {
 }
 .notification-row small {
   color: var(--muted);
+}
+.notification-read-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 12px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
 }
 .legal {
   max-width: 850px;

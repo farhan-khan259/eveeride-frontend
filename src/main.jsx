@@ -292,9 +292,21 @@ function Brand() {
     </Link>
   );
 }
+function notificationIsRead(notification, userId) {
+  if (notification.read === true) return true;
+  return Boolean(
+    notification.readBy?.some(
+      (reader) => String(reader?._id || reader) === String(userId),
+    ),
+  );
+}
 function Shell() {
   const { user, pub, logout, impersonating, returnToAdmin } = useApp(),
-    [menu, setMenu] = useState(false);
+    [menu, setMenu] = useState(false),
+    { data: headerNotifications } = useData("/notifications", [], 30000),
+    unreadNotifications = headerNotifications.filter(
+      (notification) => !notificationIsRead(notification, user?.id),
+    ).length;
   const location = useLocation();
   useEffect(() => {
     setMenu(false);
@@ -374,9 +386,12 @@ function Shell() {
             <Link
               className="icon-btn notification"
               to="/notifications"
-              aria-label="Notifications"
+              aria-label={`${unreadNotifications} unread notifications`}
             >
               <Bell size={20} />
+              <span className="notification-badge">
+                {unreadNotifications > 99 ? "99+" : unreadNotifications}
+              </span>
             </Link>
             <Link to={user ? "/account" : "/login"} className="avatar">
               {user?.name?.slice(0, 1) || "U"}
@@ -2056,7 +2071,7 @@ function Account() {
 }
 function Notifications() {
   const { data, error } = useData("/notifications", []),
-    { action } = useApp();
+    { action, user } = useApp();
   return (
     <>
       <PageTitle title="Your latest updates." eyebrow="NOTIFICATIONS" />
@@ -2071,14 +2086,20 @@ function Notifications() {
                 <p>{n.message}</p>
                 <small>{when(n.createdAt)}</small>
               </div>
-              <Button
-                secondary
-                onClick={() =>
-                  action(() => api.post(`/notifications/${n._id}/read`))
-                }
-              >
-                Mark read
-              </Button>
+              {notificationIsRead(n, user?.id) ? (
+                <span className="notification-read-status">
+                  <Check size={15} /> Read
+                </span>
+              ) : (
+                <Button
+                  secondary
+                  onClick={() =>
+                    action(() => api.post(`/notifications/${n._id}/read`))
+                  }
+                >
+                  Mark read
+                </Button>
+              )}
             </div>
           ))
         ) : (
