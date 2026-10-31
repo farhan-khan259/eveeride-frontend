@@ -979,24 +979,88 @@ main {
 .invite-card .text-link {
   margin-top: 10px;
 }
-.coming {
-  display: flex;
+.upcoming-plan {
+  position: relative;
+  overflow: hidden;
+  margin-top: 24px;
+  padding: 26px;
+  border: 1px solid #cce4ec;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff, #f1f9fc);
+  display: grid;
+  grid-template-columns: auto minmax(220px, 1fr) auto;
   align-items: center;
-  gap: 16px;
-  border: 1px dashed #d3e4ec;
-  border-radius: 12px;
-  padding: 20px;
-  background: #ffffff50;
+  gap: 20px;
+  box-shadow: 0 8px 25px rgba(22, 94, 117, 0.07);
 }
-.coming b {
-  font-size: 12px;
+.upcoming-plan::after {
+  content: "";
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  right: -70px;
+  top: -100px;
+  border: 1px solid rgba(0, 178, 218, 0.14);
+  border-radius: 50%;
+  box-shadow: 0 0 0 30px rgba(0, 178, 218, 0.025);
 }
-.coming p {
+.upcoming-plan.compact { margin-top: 0; }
+.upcoming-plan-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: #e6f6fb;
+  color: var(--ocean);
+  display: grid;
+  place-items: center;
+}
+.upcoming-plan-copy { min-width: 0; }
+.upcoming-plan-copy .eyebrow { margin-bottom: 5px; }
+.upcoming-plan-copy h2 { margin: 0; font-size: 20px; }
+.upcoming-plan-copy p {
+  max-width: 610px;
+  margin: 7px 0 0;
+  color: var(--muted);
   font-size: 10px;
-  margin: 5px 0 0;
+  line-height: 1.6;
 }
-.coming > .tag {
-  margin-left: auto;
+.upcoming-plan-status {
+  min-width: 300px;
+  text-align: right;
+  z-index: 1;
+}
+.upcoming-plan-lock {
+  display: inline-flex;
+  margin-bottom: 9px;
+  color: #4a8192;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.upcoming-plan-lock.unlocked { color: #168e77; }
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+.countdown-grid > span {
+  min-width: 58px;
+  padding: 9px 8px;
+  border: 1px solid #d8eaf0;
+  border-radius: 9px;
+  background: #fff;
+  text-align: center;
+}
+.countdown-grid b,
+.countdown-grid small { display: block; }
+.countdown-grid b { color: var(--ink); font: 700 17px Manrope, sans-serif; }
+.countdown-grid small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
 }
 .tag {
   display: inline-block;
@@ -2288,15 +2352,22 @@ td small {
   .stat-grid .card {
     margin-bottom: 18px;
   }
-  .coming {
-    padding: 18px;
+  .upcoming-plan {
+    grid-template-columns: auto 1fr;
+    padding: 19px;
+    gap: 14px;
   }
-  .coming p {
-    font-size: 9px;
+  .upcoming-plan-icon {
+    width: 48px;
+    height: 48px;
   }
-  .coming > .tag {
-    display: none;
+  .upcoming-plan-copy h2 { font-size: 17px; }
+  .upcoming-plan-status {
+    grid-column: 1 / -1;
+    min-width: 0;
+    text-align: left;
   }
+  .countdown-grid > span { min-width: 0; }
   footer {
     font-size: 8px;
     gap: 15px;

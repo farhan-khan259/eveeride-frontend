@@ -536,6 +536,7 @@ function MoneyStat({ icon: Icon, label, value, description }) {
 }
 const WHATSAPP_CHANNEL =
   "https://whatsapp.com/channel/0029VbEJyKw2975BrU2C0a3E";
+const UPCOMING_PLAN_UNLOCK_AT = Date.parse("2026-11-10T23:59:59+05:00");
 function WhatsAppChannel({ promo = false }) {
   return (
     <a
@@ -566,6 +567,55 @@ function WhatsAppChannel({ promo = false }) {
         Join now <ArrowUpRight size={18} />
       </span>
     </a>
+  );
+}
+function UpcomingPlan({ compact = false }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const remaining = Math.max(0, UPCOMING_PLAN_UNLOCK_AT - now),
+    unlocked = remaining === 0,
+    days = Math.floor(remaining / 86400000),
+    hours = Math.floor(remaining / 3600000) % 24,
+    minutes = Math.floor(remaining / 60000) % 60,
+    seconds = Math.floor(remaining / 1000) % 60;
+  return (
+    <section className={`upcoming-plan${compact ? " compact" : ""}`}>
+      <div className="upcoming-plan-icon">
+        {unlocked ? <Layers size={27} /> : <Lock size={25} />}
+      </div>
+      <div className="upcoming-plan-copy">
+        <span className="eyebrow">UPCOMING PLAN</span>
+        <h2>EveeRide Pulse</h2>
+        <p>
+          {unlocked
+            ? "Plan details are now unlocked. Full launch information will appear here."
+            : "A new EveeRide experience is on the way. Pricing, duration and rewards stay locked until launch."}
+        </p>
+      </div>
+      <div className="upcoming-plan-status">
+        <span className={`upcoming-plan-lock${unlocked ? " unlocked" : ""}`}>
+          {unlocked ? "Details unlocked" : "Unlocks in"}
+        </span>
+        {!unlocked && (
+          <div className="countdown-grid" aria-label={`${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`}>
+            {[
+              [days, "Days"],
+              [hours, "Hours"],
+              [minutes, "Min"],
+              [seconds, "Sec"],
+            ].map(([value, label]) => (
+              <span key={label}>
+                <b>{String(value).padStart(2, "0")}</b>
+                <small>{label}</small>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 function Dashboard() {
@@ -830,16 +880,7 @@ function Dashboard() {
           <div className="invite-lines" />
         </Card>
       </div>
-      <div className="coming">
-        <span className="square-icon">
-          <Clock size={22} />
-        </span>
-        <div>
-          <b>Something new, when it’s ready.</b>
-          <p>No upcoming plan has been announced. Updates will appear here.</p>
-        </div>
-        <Tag>Stay tuned</Tag>
-      </div>
+      <UpcomingPlan compact />
     </>
   );
 }
@@ -977,6 +1018,7 @@ function Plans({ owned = false }) {
           </div>
         </div>
       )}
+      {!owned && <UpcomingPlan />}
       {confirm && (
         <Modal title="Activate Starter Plan?" close={() => setConfirm(false)}>
           <p>
