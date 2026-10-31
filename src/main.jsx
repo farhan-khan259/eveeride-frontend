@@ -2384,7 +2384,7 @@ function AdminDashboard() {
           ["Pending deposits", d.pendingDeposits, "/admin/deposits"],
           ["Approved deposits", rupees(d.approvedDeposits), "/admin/deposits"],
           ["Pending withdrawals", d.pendingWithdrawals, "/admin/withdrawals"],
-          ["Completed withdrawals", rupees(d.completedWithdrawals), "/admin/withdrawals"],
+          ["Approved withdrawals", rupees(d.approvedWithdrawals), "/admin/withdrawals"],
           ["Task rewards", rupees(d.taskRewards)],
           ["Commissions", rupees(d.commissions)],
         ].map(([n, v, to]) => {
@@ -2573,9 +2573,7 @@ function AdminRequests({ withdrawal = false }) {
     [record, setRecord] = useState(null),
     [proof, setProof] = useState(null),
     { action, tell } = useApp();
-  const requestStatuses = withdrawal
-      ? ["pending", "approved", "completed", "rejected", "all"]
-      : ["pending", "approved", "rejected", "all"],
+  const requestStatuses = ["pending", "approved", "rejected"],
     visibleRequests =
       statusFilter === "all"
         ? data
@@ -2615,7 +2613,7 @@ function AdminRequests({ withdrawal = false }) {
         title={withdrawal ? "Withdrawal management" : "Deposit management"}
         description={
           withdrawal
-            ? "Approve requests, then record payment only after sending funds."
+            ? "Send the funds, then approve the request with its payment reference."
             : "Verify the payment account, transaction ID and evidence before crediting."
         }
       />
@@ -2799,9 +2797,7 @@ function AdminRequests({ withdrawal = false }) {
               )}
             </>
           )}
-          {["pending", ...(withdrawal ? ["approved"] : [])].includes(
-            record.status,
-          ) && (
+          {record.status === "pending" && (
             <ApiForm
               endpoint={`${endpoint}/${record._id}/decision`}
               fields={[
@@ -2809,16 +2805,9 @@ function AdminRequests({ withdrawal = false }) {
                   "status",
                   "Decision",
                   "select",
-                  withdrawal
-                    ? record.status === "approved"
-                      ? ["completed", "rejected"]
-                      : ["approved", "rejected"]
-                    : ["approved", "rejected"],
+                  ["approved", "rejected"],
                 ],
                 ["reason", "Decision reason"],
-                ...(withdrawal && record.status === "approved"
-                  ? [["paymentRef", "External payment reference"]]
-                  : []),
               ]}
               label="Record decision"
               done={() => setRecord(null)}
