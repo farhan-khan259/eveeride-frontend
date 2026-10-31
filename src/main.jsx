@@ -216,7 +216,7 @@ function RequireAuth({ children, admin = false }) {
   if (admin && user.role !== "admin") return <Navigate to="/" replace />;
   return children;
 }
-function useData(endpoint, fallback) {
+function useData(endpoint, fallback, pollMs = 0) {
   const { user, rev } = useApp();
   const [data, setData] = useState(fallback),
     [loading, setLoading] = useState(false),
@@ -227,27 +227,38 @@ function useData(endpoint, fallback) {
       setData(fallback);
       return;
     }
-    setLoading(true);
-    setError("");
-    api
-      .get(endpoint)
-      .then((r) => {
-        if (!cancel) setData(r.data);
-      })
-      .catch((e) => {
+    async function load(showLoading = false) {
+      if (showLoading) setLoading(true);
+      try {
+        const r = await api.get(endpoint);
+        if (!cancel) {
+          setData(r.data);
+          setError("");
+        }
+      } catch (e) {
         if (!cancel)
           setError(
             e.response?.data?.message ||
               "Unable to load records. Please retry.",
           );
-      })
-      .finally(() => {
-        if (!cancel) setLoading(false);
-      });
+      } finally {
+        if (!cancel && showLoading) setLoading(false);
+      }
+    }
+    const refreshVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    load(true);
+    window.addEventListener("focus", refreshVisible);
+    document.addEventListener("visibilitychange", refreshVisible);
+    const interval = pollMs ? setInterval(refreshVisible, pollMs) : null;
     return () => {
       cancel = true;
+      window.removeEventListener("focus", refreshVisible);
+      document.removeEventListener("visibilitychange", refreshVisible);
+      if (interval) clearInterval(interval);
     };
-  }, [endpoint, user?.id, rev]);
+  }, [endpoint, user?.id, rev, pollMs]);
   return { data, loading, error };
 }
 const nav = [
@@ -524,7 +535,7 @@ function MoneyStat({ icon: Icon, label, value, description }) {
 }
 function Dashboard() {
   const { user } = useApp(),
-    { data: d, loading, error } = useData("/dashboard", blank),
+    { data: d, loading, error } = useData("/dashboard", blank, 10000),
     [banner, setBanner] = useState(0);
   useEffect(() => {
     const i = setInterval(() => setBanner((x) => (x + 1) % 2), 8000);
