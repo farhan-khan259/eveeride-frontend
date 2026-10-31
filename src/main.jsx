@@ -2577,7 +2577,18 @@ function Admin() {
   );
 }
 function AdminDashboard() {
-  const { data: d, error } = useData("/admin/dashboard", {});
+  const { data: d, error } = useData("/admin/dashboard", {}),
+    chartData = d.activity?.length
+      ? d.activity
+      : [
+          {
+            date: "all-time",
+            label: "All time",
+            registrations: d.users || 0,
+            deposits: d.approvedDeposits || 0,
+            withdrawals: d.approvedWithdrawals || 0,
+          },
+        ];
   return (
     <>
       <PageTitle
@@ -2614,6 +2625,10 @@ function AdminDashboard() {
           );
         })}
       </div>
+      <div className="admin-chart-grid">
+        <AdminRegistrationChart data={chartData} />
+        <AdminFundsChart data={chartData} />
+      </div>
       <Card>
         <h2>Task video upload</h2>
         <p>Upload the MP4 video users must complete for the assigned task.</p>
@@ -2629,6 +2644,84 @@ function AdminDashboard() {
         />
       </Card>
     </>
+  );
+}
+function AdminRegistrationChart({ data }) {
+  const values = data.map((day) => day.registrations),
+    maximum = Math.max(1, ...values),
+    pointX = (index) =>
+      values.length === 1 ? 300 : 32 + index * (536 / (values.length - 1)),
+    points = values
+      .map((value, index) => {
+        const x = pointX(index),
+          y = 164 - (value / maximum) * 116;
+        return `${x},${y}`;
+      })
+      .join(" "),
+    total = values.reduce((sum, value) => sum + value, 0),
+    period = data[0]?.date === "all-time" ? "ALL-TIME TOTAL" : "LAST 7 DAYS";
+  return (
+    <Card className="admin-chart-card">
+      <div className="chart-heading">
+        <div>
+          <span className="eyebrow">{period}</span>
+          <h2>User registrations</h2>
+        </div>
+        <strong>{total}</strong>
+      </div>
+      <div className="chart-canvas">
+        <svg viewBox="0 0 600 205" role="img" aria-label="Daily user registrations">
+          {[48, 106, 164].map((y) => (
+            <line key={y} className="chart-grid-line" x1="32" x2="568" y1={y} y2={y} />
+          ))}
+          {points && <polyline className="registration-line" points={points} />}
+          {values.map((value, index) => {
+            const x = pointX(index),
+              y = 164 - (value / maximum) * 116;
+            return <circle key={data[index].date} className="registration-dot" cx={x} cy={y} r="5"><title>{data[index].label}: {value} registrations</title></circle>;
+          })}
+        </svg>
+        <div className="chart-labels" style={{ gridTemplateColumns: `repeat(${data.length}, 1fr)` }}>
+          {data.map((day) => <span key={day.date}>{day.label}</span>)}
+        </div>
+      </div>
+    </Card>
+  );
+}
+function AdminFundsChart({ data }) {
+  const maximum = Math.max(1, ...data.flatMap((day) => [day.deposits, day.withdrawals])),
+    depositTotal = data.reduce((sum, day) => sum + day.deposits, 0),
+    withdrawalTotal = data.reduce((sum, day) => sum + day.withdrawals, 0),
+    period = data[0]?.date === "all-time" ? "ALL-TIME TOTAL" : "LAST 7 DAYS";
+  return (
+    <Card className="admin-chart-card">
+      <div className="chart-heading">
+        <div>
+          <span className="eyebrow">{period}</span>
+          <h2>Approved cash activity</h2>
+        </div>
+        <div className="chart-legend">
+          <span><i className="deposit-key" />Deposits {rupees(depositTotal)}</span>
+          <span><i className="withdrawal-key" />Withdrawals {rupees(withdrawalTotal)}</span>
+        </div>
+      </div>
+      <div
+        className="bar-chart"
+        style={{ gridTemplateColumns: `repeat(${data.length}, minmax(40px, 1fr))` }}
+        role="img"
+        aria-label="Approved deposits and withdrawals"
+      >
+        {data.map((day) => (
+          <div className="bar-day" key={day.date}>
+            <div className="bar-pair">
+              <i className="deposit-bar" style={{ height: `${Math.max(3, (day.deposits / maximum) * 100)}%` }} title={`${day.label} deposits: ${rupees(day.deposits)}`} />
+              <i className="withdrawal-bar" style={{ height: `${Math.max(3, (day.withdrawals / maximum) * 100)}%` }} title={`${day.label} withdrawals: ${rupees(day.withdrawals)}`} />
+            </div>
+            <span>{day.label}</span>
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }
 function ApiForm({
