@@ -1742,11 +1742,19 @@ function Salary() {
         eyebrow="SALARY REWARDS"
         description="Ten repeatable levels. Each cycle counts new approved team deposits for ten days, then resets."
       />
-      <div className="info-strip">
-        <Crown size={20} />
-        Current cycle progress: <b>{rupees(data.total)}</b> · Cycle ends in{" "}
-        <b>{countdown(data.cycleEndsAt, now + offset)}</b> · Activity from up to
-        four referral levels are included.
+      <div className="info-strip salary-cycle-summary">
+        <span className="salary-cycle-icon">
+          <Crown size={20} />
+        </span>
+        <div className="salary-cycle-metric">
+          <small>Current cycle progress</small>
+          <b>{rupees(data.total)}</b>
+        </div>
+        <div className="salary-cycle-metric">
+          <small>Cycle ends in</small>
+          <b>{countdown(data.cycleEndsAt, now + offset)}</b>
+        </div>
+        <p>Approved deposits from up to four referral levels are included.</p>
       </div>
       <ErrorState error={error} />
       <div className="salary-grid">
