@@ -1190,7 +1190,10 @@ function Tasks() {
               <video controls playsInline src={urls[t._id]} />
             ) : (
               <div className="video-placeholder">
-                <Play size={40} />
+                <img
+                  src="/images/video-task-cover.png"
+                  alt="Video task ready to watch"
+                />
               </div>
             )}
             <h2>{t.task.title}</h2>
