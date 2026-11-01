@@ -1706,6 +1706,7 @@ function countdown(date, now) {
 function Salary() {
   const fallback = {
       total: 0,
+      cycleEndsAt: null,
       states: [],
       levels: [
         [5000, 500],
@@ -1736,12 +1737,13 @@ function Salary() {
       <PageTitle
         title="Every milestone deserves a moment."
         eyebrow="SALARY REWARDS"
-        description="Ten levels. One-time team-performance bonuses. A ten-day wait after qualification."
+        description="Ten repeatable levels. Each cycle counts new approved team deposits for ten days, then resets."
       />
       <div className="info-strip">
         <Crown size={20} />
-        Team progress: <b>{rupees(data.total)}</b> · Activity from up to four
-        referral levels is included.
+        Current cycle progress: <b>{rupees(data.total)}</b> · Cycle ends in{" "}
+        <b>{countdown(data.cycleEndsAt, now + offset)}</b> · Activity from up to
+        four referral levels are included.
       </div>
       <ErrorState error={error} />
       <div className="salary-grid">
@@ -1775,7 +1777,9 @@ function Salary() {
                 <Clock size={15} />
                 {s?.claimedAt
                   ? "Claimed on " + when(s.claimedAt)
-                  : countdown(s?.claimAfter, now + offset)}
+                  : s
+                    ? countdown(s.claimAfter, now + offset)
+                    : `Cycle ends in ${countdown(data.cycleEndsAt, now + offset)}`}
               </div>
               <Button
                 secondary
@@ -1787,9 +1791,9 @@ function Salary() {
                 }
               >
                 {s?.claimedAt
-                  ? "Bonus claimed"
+                  ? "Reward claimed"
                   : s
-                    ? "Claim bonus"
+                    ? "Claim salary"
                     : "Reach target to qualify"}
               </Button>
             </Card>
