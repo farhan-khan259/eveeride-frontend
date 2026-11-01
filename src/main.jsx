@@ -1094,6 +1094,33 @@ function Tasks() {
     () => () => Object.values(urls).forEach(URL.revokeObjectURL),
     [urls],
   );
+  function NextTaskCountdown({ unlockAt }) {
+    const [now, setNow] = useState(Date.now());
+    useEffect(() => {
+      const timer = setInterval(() => setNow(Date.now()), 1000);
+      return () => clearInterval(timer);
+    }, []);
+    const seconds = Math.max(
+        0,
+        Math.ceil((Date.parse(unlockAt) - now) / 1000),
+      ),
+      hours = Math.floor(seconds / 3600),
+      minutes = Math.floor(seconds / 60) % 60,
+      remainder = seconds % 60;
+    return (
+      <div className="next-task-timer" role="timer" aria-live="off">
+        <Clock size={17} />
+        <span>
+          <small>{seconds ? "Next task in" : "Next task"}</small>
+          <b>
+            {seconds
+              ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`
+              : "Ready now"}
+          </b>
+        </span>
+      </div>
+    );
+  }
   async function start(t) {
     const r = await action(() => api.post(`/tasks/${t._id}/start`));
     if (r) {
@@ -1137,8 +1164,9 @@ function Tasks() {
             )}
             <h2>{t.task.title}</h2>
             <p>
-              {t.task.duration} seconds · {rupees(t.reward)} reward
+              5 seconds · {rupees(t.reward)} reward
             </p>
+            {t.completed && <NextTaskCountdown unlockAt={t.expires} />}
             {!t.completed && (
               <div className="button-row">
                 <Button secondary onClick={() => start(t)}>

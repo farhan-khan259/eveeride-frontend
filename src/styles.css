@@ -1294,6 +1294,32 @@ video {
   gap: 10px;
   margin: 12px 0;
 }
+.next-task-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid #d4e9f2;
+  border-radius: 10px;
+  background: #eaf6fb;
+  color: #1b9bb6;
+}
+.next-task-timer span,
+.next-task-timer small,
+.next-task-timer b {
+  display: block;
+}
+.next-task-timer small {
+  color: #607d89;
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+.next-task-timer b {
+  color: #173f4d;
+  font: 700 16px Manrope, sans-serif;
+  letter-spacing: 0.04em;
+}
 .form-layout {
   display: grid;
   grid-template-columns: minmax(300px, 1.1fr) 1fr;
