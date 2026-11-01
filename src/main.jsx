@@ -37,6 +37,8 @@ import {
   Menu,
   X,
   Plus,
+  Minus,
+  Trash2,
   Video,
   Settings,
   Ticket,
@@ -2807,6 +2809,7 @@ function ApiForm({
 function AdminUsers() {
   const [query, setQuery] = useState(""),
     [p, setP] = useState(1),
+    [operation, setOperation] = useState(null),
     { data, error } = useData(
       "/admin/users?page=" + p + "&search=" + encodeURIComponent(query),
       { items: [], total: 0 },
@@ -2818,6 +2821,25 @@ function AdminUsers() {
       api.post(`/admin/users/${u._id}/impersonate`),
     );
     if (session && (await startImpersonation(session))) navigate("/");
+  }
+  async function submitOperation(e) {
+    e.preventDefault();
+    const form = Object.fromEntries(new FormData(e.currentTarget));
+    if (operation.type === "delete") {
+      const result = await action(() =>
+        api.delete(`/admin/users/${operation.user._id}`, { data: form }),
+      );
+      if (result) setOperation(null);
+      return;
+    }
+    const result = await action(() =>
+      api.post(`/admin/users/${operation.user._id}/adjust`, {
+        ...form,
+        type: operation.type,
+        requestId: crypto.randomUUID(),
+      }),
+    );
+    if (result) setOperation(null);
   }
   return (
     <>
@@ -2840,7 +2862,7 @@ function AdminUsers() {
         </form>
         <ErrorState error={error} />
         <div className="table-wrap">
-          <table>
+          <table className="admin-users-table">
             <thead>
               <tr>
                 <th>User</th>
@@ -2853,29 +2875,52 @@ function AdminUsers() {
             <tbody>
               {data.items.map((u) => (
                 <tr key={u._id}>
-                  <td>
+                  <td data-label="User">
                     <b>{u.name}</b>
                     <small>{u.email}</small>
                     <small className="mono">{u._id}</small>
                   </td>
-                  <td>{u.status}</td>
-                  <td>{when(u.createdAt)}</td>
-                  <td>
+                  <td data-label="Status">{u.status}</td>
+                  <td data-label="Registered">{when(u.createdAt)}</td>
+                  <td data-label="Balance">
                     {rupees(
                       (u.wallet.deposit || 0) +
                         (u.wallet.earned || 0) +
                         (u.wallet.promo || 0),
                     )}
                   </td>
-                  <td>
-                    <Button
-                      secondary
-                      disabled={u.role === "admin" || u.status !== "active"}
-                      onClick={() => accessUser(u)}
-                    >
-                      <LogIn size={15} />
-                      {u.role === "admin" ? "Admin" : "Login"}
-                    </Button>
+                  <td data-label="Actions">
+                    <div className="admin-user-actions">
+                      <Button
+                        secondary
+                        disabled={u.role === "admin" || u.status !== "active"}
+                        onClick={() => accessUser(u)}
+                      >
+                        <LogIn size={15} />
+                        {u.role === "admin" ? "Admin" : "Login"}
+                      </Button>
+                      <Button
+                        secondary
+                        disabled={u.role === "admin" || u.status === "deleted"}
+                        onClick={() => setOperation({ type: "credit", user: u })}
+                      >
+                        <Plus size={15} /> Add Balance
+                      </Button>
+                      <Button
+                        secondary
+                        disabled={u.role === "admin" || u.status === "deleted"}
+                        onClick={() => setOperation({ type: "debit", user: u })}
+                      >
+                        <Minus size={15} /> Remove Balance
+                      </Button>
+                      <Button
+                        className="btn danger"
+                        disabled={u.role === "admin" || u.status === "deleted"}
+                        onClick={() => setOperation({ type: "delete", user: u })}
+                      >
+                        <Trash2 size={15} /> Delete
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -2896,6 +2941,53 @@ function AdminUsers() {
           </Button>
         </div>
       </Card>
+      {operation && (
+        <Modal
+          title={
+            operation.type === "credit"
+              ? `Add balance — ${operation.user.name}`
+              : operation.type === "debit"
+                ? `Remove balance — ${operation.user.name}`
+                : `Delete account — ${operation.user.name}`
+          }
+          close={() => setOperation(null)}
+        >
+          <form onSubmit={submitOperation}>
+            {operation.type === "delete" ? (
+              <>
+                <p>
+                  The account must have a zero balance and no open payment
+                  requests. Financial and audit records will be retained.
+                </p>
+                <Field
+                  label="Type DELETE to confirm"
+                  name="confirmation"
+                  required
+                  pattern="DELETE"
+                  autoComplete="off"
+                />
+              </>
+            ) : (
+              <Field
+                label="Amount (PKR)"
+                name="amount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+              />
+            )}
+            <Field label="Reason" name="reason" minLength="5" required />
+            <Submit>
+              {operation.type === "credit"
+                ? "Add balance"
+                : operation.type === "debit"
+                  ? "Remove balance"
+                  : "Delete account"}
+            </Submit>
+          </form>
+        </Modal>
+      )}
     </>
   );
 }

@@ -752,6 +752,24 @@ main {
 .btn.secondary:hover {
   background: #f0f8fc;
 }
+.btn.danger {
+  background: #fff4f2;
+  border-color: #efc8c1;
+  color: #a94e40;
+}
+.btn.danger:hover {
+  background: #ffe7e2;
+}
+.admin-user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 360px;
+}
+.admin-user-actions .btn {
+  padding: 9px 11px;
+  min-height: 36px;
+}
 .banner .btn {
   font-size: 10px;
   padding: 11px 15px;
@@ -2896,6 +2914,71 @@ td small {
   .pagination .btn {
     padding: 9px 12px;
   }
+  .admin-users-table thead {
+    display: none;
+  }
+  .admin-users-table,
+  .admin-users-table tbody,
+  .admin-users-table tr,
+  .admin-users-table td {
+    display: block;
+    width: 100%;
+  }
+  .admin-users-table tr {
+    margin-bottom: 16px;
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+  }
+  .admin-users-table td {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid #edf3f6;
+  }
+  .admin-users-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .admin-users-table td:first-child {
+    display: block;
+    padding-top: 0;
+  }
+  .admin-users-table td:first-child::before {
+    display: none;
+  }
+  .admin-users-table td:last-child {
+    display: block;
+    padding: 14px 0 0;
+    border-bottom: 0;
+  }
+  .admin-users-table td:last-child::before {
+    display: block;
+    margin-bottom: 10px;
+  }
+  .admin-user-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
+  }
+  .admin-user-actions .btn {
+    width: 100%;
+    padding-inline: 8px;
+  }
+  .admin-main .filter-bar {
+    align-items: stretch;
+  }
+  .admin-main .filter-bar .btn {
+    flex: 0 0 auto;
+  }
+  .admin-main .pagination {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   table {
     font-size: 10px;
   }
@@ -2908,6 +2991,18 @@ td small {
   }
   .details {
     font-size: 11px;
+  }
+}
+@media (max-width: 420px) {
+  .admin-user-actions {
+    grid-template-columns: 1fr;
+  }
+  .admin-main .filter-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .admin-main .filter-bar .btn {
+    width: 100%;
   }
 }
 @media (prefers-reduced-motion: reduce) {
