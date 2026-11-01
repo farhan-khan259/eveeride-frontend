@@ -270,7 +270,6 @@ const nav = [
   ["/", "Overview", LayoutDashboard],
   ["/plans", "Explore plans", Layers],
   ["/products", "My product", Package],
-  ["/tasks", "Daily tasks", Play],
   ["/team", "My team", Users],
   ["/salary", "Salary rewards", Crown],
   ["/activity", "Transactions", History],
@@ -278,6 +277,7 @@ const nav = [
 ];
 const pageLabels = Object.fromEntries([
   ...nav.map(([path, label]) => [path, label]),
+  ["/tasks", "Daily tasks"],
   ["/support", "Help & support"],
   ["/account", "Account settings"],
   ["/notifications", "Notifications"],
@@ -326,7 +326,6 @@ function Shell() {
             <NavLink end to={to} key={to}>
               <Icon size={19} />
               {name}
-              {to === "/tasks" && <span className="nav-dot" />}
             </NavLink>
           ))}
         </nav>
@@ -454,7 +453,7 @@ function Shell() {
         {[
           ["/", "Home", LayoutDashboard],
           ["/plans", "Plans", Layers],
-          ["/products", "My product", Package],
+          ["/tasks", "Daily tasks", Play],
           ["/activity", "Activity", History],
           ["/account", "Account", UserRound],
         ].map(([to, n, I]) => (
