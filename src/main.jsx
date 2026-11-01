@@ -1641,6 +1641,7 @@ function Team() {
                 <tr>
                   <th>Name</th>
                   <th>Level</th>
+                  <th>Total deposit</th>
                   <th>Joined</th>
                 </tr>
               </thead>
@@ -1649,6 +1650,7 @@ function Team() {
                   <tr key={i}>
                     <td>{m.name}</td>
                     <td>Level {m.level}</td>
+                    <td>{rupees(m.deposits)}</td>
                     <td>{when(m.joined)}</td>
                   </tr>
                 ))}
