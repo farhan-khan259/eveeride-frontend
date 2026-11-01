@@ -53,6 +53,7 @@ import {
   AlertCircle,
   Download,
   ExternalLink,
+  Camera,
 } from "lucide-react";
 import { api, rupees, when, blank } from "./api.js";
 import "./styles.css";
@@ -160,6 +161,7 @@ function App() {
         impersonating,
         startImpersonation,
         returnToAdmin,
+        updateUser: setUser,
       }}
     >
       <BrowserRouter>
@@ -395,8 +397,8 @@ function Shell() {
                 {unreadNotifications > 99 ? "99+" : unreadNotifications}
               </span>
             </Link>
-            <Link to={user ? "/account" : "/login"} className="avatar">
-              {user?.name?.slice(0, 1) || "U"}
+            <Link to={user ? "/account" : "/login"} className="avatar-link">
+              <ProfileAvatar user={user} />
             </Link>
           </div>
         </header>
@@ -484,6 +486,34 @@ function PageTitle({
 }
 function Tag({ children }) {
   return <span className="tag">{children}</span>;
+}
+function ProfileAvatar({ user, large = false }) {
+  const [src, setSrc] = useState("");
+  useEffect(() => {
+    let active = true,
+      objectUrl = "";
+    if (!user?.avatarVersion) {
+      setSrc("");
+      return () => {};
+    }
+    api
+      .get("/account/avatar", { responseType: "blob" })
+      .then((response) => {
+        if (!active) return;
+        objectUrl = URL.createObjectURL(response.data);
+        setSrc(objectUrl);
+      })
+      .catch(() => active && setSrc(""));
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [user?.avatarVersion]);
+  return (
+    <span className={`avatar${large ? " large" : ""}`}>
+      {src ? <img src={src} alt="" /> : user?.name?.slice(0, 1) || "U"}
+    </span>
+  );
 }
 function Button({
   children,
@@ -1976,9 +2006,21 @@ function Activity({ admin = false }) {
   );
 }
 function Account() {
-  const { user, logout, action, login, impersonating } = useApp(),
+  const { user, logout, action, login, impersonating, updateUser } = useApp(),
     [editingPassword, setEditingPassword] = useState(false),
-    [savingPassword, setSavingPassword] = useState(false);
+    [savingPassword, setSavingPassword] = useState(false),
+    [savingAvatar, setSavingAvatar] = useState(false);
+  async function changeAvatar(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const form = new FormData();
+    form.append("avatar", file);
+    setSavingAvatar(true);
+    const result = await action(() => api.post("/account/avatar", form));
+    if (result?.user) updateUser(result.user);
+    setSavingAvatar(false);
+    e.target.value = "";
+  }
   async function changePassword(e) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -2003,7 +2045,25 @@ function Account() {
         {user ? (
           <>
             <div className="profile">
-              <span className="avatar large">{user.name[0]}</span>
+              <div className="profile-photo-control">
+                <ProfileAvatar user={user} large />
+                {!impersonating && (
+                  <label className="profile-photo-button">
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={changeAvatar}
+                      disabled={savingAvatar}
+                    />
+                    <Camera size={14} />
+                    {savingAvatar
+                      ? "Uploading…"
+                      : user.avatarVersion
+                        ? "Change photo"
+                        : "Add photo"}
+                  </label>
+                )}
+              </div>
               <div>
                 <h2>{user.name}</h2>
                 <p>@{user.username}</p>
