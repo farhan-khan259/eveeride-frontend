@@ -464,6 +464,17 @@ main {
   font-size: 15px;
   font-weight: 500;
 }
+.balance-breakdown .deposit-balance {
+  text-align: right;
+  align-items: flex-end;
+}
+.balance-breakdown .deposit-balance span {
+  color: #fff;
+}
+.balance-breakdown .deposit-balance b {
+  color: #ff4d55;
+  font-weight: 700;
+}
 .balance-foot {
   border-top: 1px solid #ffffff25;
   margin-top: 20px;

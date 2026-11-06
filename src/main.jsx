@@ -818,9 +818,15 @@ function Dashboard() {
           </div>
           <div className="balance-breakdown">
             <div>
-              <span>Withdrawable</span>
+              <span>Withdrawable balance</span>
               <b className={balanceVisible ? "" : "concealed"}>
                 {balanceVisible ? rupees(d.withdrawable) : "••••••"}
+              </b>
+            </div>
+            <div className="deposit-balance">
+              <span>Deposit balance</span>
+              <b className={balanceVisible ? "" : "concealed"}>
+                {balanceVisible ? rupees(d.user?.wallet?.deposit || 0) : "••••••"}
               </b>
             </div>
           </div>
