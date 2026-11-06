@@ -2034,7 +2034,21 @@ function Activity({ admin = false }) {
     { data, error, loading } = useData(
       `${admin ? "/admin" : ""}/transactions?page=${p}${filter}`,
       { items: [], total: 0 },
-    );
+    ),
+    { data: requests } = useData("/requests", {
+      deposits: [],
+      withdrawals: [],
+    });
+  const pendingRequests = admin
+    ? []
+    : [
+        ...requests.deposits
+          .filter((request) => ["awaiting", "pending"].includes(request.status))
+          .map((request) => ({ ...request, kind: "Deposit" })),
+        ...requests.withdrawals
+          .filter((request) => request.status === "pending")
+          .map((request) => ({ ...request, kind: "Withdrawal" })),
+      ].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
   return (
     <>
       <PageTitle
@@ -2079,7 +2093,43 @@ function Activity({ admin = false }) {
           </Button>
         </form>
         <ErrorState error={error} loading={loading} />
-        <TransactionList items={data.items} />
+        {pendingRequests.length > 0 && (
+          <section className="pending-activity">
+            <div className="section-head">
+              <div>
+                <h2>Pending requests</h2>
+                <p>Deposits and withdrawals currently awaiting completion or review.</p>
+              </div>
+              <Tag>{pendingRequests.length} PENDING</Tag>
+            </div>
+            <div className="transaction-list">
+              {pendingRequests.map((request) => (
+                <div className="list-row" key={`${request.kind}-${request._id}`}>
+                  <span className={`transaction-icon${request.kind === "Withdrawal" ? " out" : ""}`}>
+                    {request.kind === "Withdrawal" ? (
+                      <ArrowUpRight size={19} />
+                    ) : (
+                      <ArrowDownLeft size={19} />
+                    )}
+                  </span>
+                  <div>
+                    <b>{request.kind} request</b>
+                    <small>
+                      {when(request.createdAt)} · {request.status === "awaiting" ? "Awaiting payment" : "Awaiting review"}
+                    </small>
+                  </div>
+                  <div className="transaction-amount">
+                    <b>{rupees(request.amount)}</b>
+                    <small className="pending-status">Pending</small>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+        {data.items.length > 0 || pendingRequests.length === 0 ? (
+          <TransactionList items={data.items} />
+        ) : null}
         <div className="pagination">
           <span>
             {data.total} records · Page {p}

@@ -2251,6 +2251,19 @@ td small {
   font-size: 10px;
   color: var(--muted);
 }
+.pending-activity {
+  margin: 20px 0 8px;
+  padding: 18px 0 8px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.pending-activity .section-head {
+  margin-bottom: 8px;
+}
+.pending-activity .pending-status {
+  color: #a66d16;
+  font-weight: 700;
+}
 .profile {
   display: flex;
   gap: 20px;
@@ -4055,6 +4068,16 @@ td small {
   .transaction-list .transaction-amount b,
   .transaction-list .transaction-amount small {
     text-align: right;
+  }
+  .pending-activity .section-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .pending-activity .section-head > div {
+    flex: 1 1 190px;
+  }
+  .pending-activity .tag {
+    flex-shrink: 0;
   }
   .pagination {
     justify-content: space-between;
