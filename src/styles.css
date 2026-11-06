@@ -2669,6 +2669,36 @@ td small {
   width: 100%;
   margin: 12px 0 25px;
 }
+.reset-page .password-visibility {
+  width: 32px;
+  margin: 0;
+}
+.reset-change-email {
+  margin: -10px 0 18px;
+}
+.otp-resend-row {
+  min-height: 22px;
+  margin-top: 12px;
+  color: #d64545;
+  font-size: 11px;
+  font-weight: 700;
+}
+.otp-resend-row span {
+  color: #d64545;
+}
+.otp-resend-row button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #d64545;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.otp-resend-row button:hover {
+  color: #b92f2f;
+}
 .reset-page h1 {
   font-size: 26px;
   margin-top: 25px;

@@ -2744,10 +2744,61 @@ function Auth({ register = false, admin = false }) {
     </div>
   );
 }
-function Reset({ reset = false }) {
+function Reset() {
   const { tell } = useApp(),
     [busy, setBusy] = useState(false),
-    token = new URLSearchParams(useLocation().search).get("token");
+    [otpSent, setOtpSent] = useState(false),
+    [otpCooldown, setOtpCooldown] = useState(0),
+    [email, setEmail] = useState(""),
+    navigate = useNavigate();
+  useEffect(() => {
+    if (!otpSent || otpCooldown <= 0) return;
+    const timer = setInterval(
+      () => setOtpCooldown((seconds) => Math.max(0, seconds - 1)),
+      1000,
+    );
+    return () => clearInterval(timer);
+  }, [otpSent, otpCooldown]);
+  async function requestOtp() {
+    const response = await api.post("/auth/forgot", { email });
+    tell(response.data.message);
+    setOtpSent(true);
+    setOtpCooldown(60);
+  }
+  async function resendOtp() {
+    setBusy(true);
+    try {
+      await requestOtp();
+    } catch (error) {
+      tell(
+        error.response?.data?.message || "Could not send a new OTP.",
+        true,
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const body = Object.fromEntries(new FormData(e.currentTarget));
+      if (!otpSent) {
+        await requestOtp();
+      } else {
+        const response = await api.post("/auth/reset", { ...body, email });
+        tell(response.data.message);
+        navigate("/login", { replace: true });
+      }
+    } catch (error) {
+      tell(
+        error.response?.data?.message || "Could not connect to the backend.",
+        true,
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <div className="reset-page">
       <Brand />
@@ -2755,45 +2806,89 @@ function Reset({ reset = false }) {
         <span className="square-icon">
           <Mail />
         </span>
-        <h1>{reset ? "Choose a new password." : "Forgot your password?"}</h1>
+        <h1>{otpSent ? "Enter your OTP." : "Forgot your password?"}</h1>
         <p>
-          {reset
-            ? "Use a strong password to secure your account."
-            : "We’ll email a reset link if the address is registered."}
+          {otpSent
+            ? `Enter the six-digit code sent to ${email}, then choose a new password.`
+            : "Enter your registered email address and we’ll send you a six-digit OTP."}
         </p>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setBusy(true);
-            try {
-              const b = Object.fromEntries(new FormData(e.target));
-              if (reset) b.token = token;
-              const r = await api.post(
-                reset ? "/auth/reset" : "/auth/forgot",
-                b,
-              );
-              tell(r.data.message);
-            } catch (e) {
-              tell(
-                e.response?.data?.message ||
-                  "Could not connect to the backend.",
-                true,
-              );
-            }
-            setBusy(false);
-          }}
-        >
-          <Field
-            label={reset ? "New password" : "Email address"}
-            type={reset ? "password" : "email"}
-            name={reset ? "password" : "email"}
-            minLength={reset ? 10 : undefined}
-            required
-          />
-          <Submit busy={busy}>
-            {reset ? "Reset password" : "Send reset link"}
-          </Submit>
+        <form onSubmit={submit}>
+          {!otpSent ? (
+            <Field
+              label="Email address"
+              type="email"
+              name="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              required
+            />
+          ) : (
+            <>
+              <Field
+                label="OTP"
+                name="otp"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                placeholder="Enter 6-digit OTP"
+                required
+              />
+              <Field
+                label="New password"
+                name="password"
+                type="password"
+                minLength={10}
+                maxLength={100}
+                autoComplete="new-password"
+                required
+              />
+              <Field
+                label="Confirm new password"
+                name="confirmPassword"
+                type="password"
+                minLength={10}
+                maxLength={100}
+                autoComplete="new-password"
+                required
+              />
+              <small className="muted">
+                The OTP expires after 10 minutes. Use at least 10 characters
+                with uppercase, lowercase and a number.
+              </small>
+              <div className="otp-resend-row" aria-live="polite">
+                {otpCooldown > 0 ? (
+                  <span>
+                    Resend OTP in {String(Math.floor(otpCooldown / 60)).padStart(2, "0")}:
+                    {String(otpCooldown % 60).padStart(2, "0")}
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={resendOtp}
+                    disabled={busy}
+                  >
+                    Resend OTP
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+          <Submit busy={busy}>{otpSent ? "Change password" : "Get OTP"}</Submit>
         </form>
+        {otpSent && (
+          <button
+            type="button"
+            className="text-link reset-change-email"
+            onClick={() => {
+              setOtpSent(false);
+              setOtpCooldown(0);
+            }}
+          >
+            Change email address
+          </button>
+        )}
         <Link className="text-link" to="/login">
           Back to sign in
         </Link>
