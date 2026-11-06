@@ -1979,17 +1979,13 @@ function Activity({ admin = false }) {
     { data, error, loading } = useData(
       `${admin ? "/admin" : ""}/transactions?page=${p}${filter}`,
       { items: [], total: 0 },
-    ),
-    { data: requests } = useData("/requests", {
-      deposits: [],
-      withdrawals: [],
-    });
+    );
   return (
     <>
       <PageTitle
         title="Every movement, accounted for."
         eyebrow="TRANSACTIONS"
-        description="Your immutable ledger and request status, in one place."
+        description="Your immutable transaction ledger, all in one place."
       />
       <Card>
         <form
@@ -2045,37 +2041,6 @@ function Activity({ admin = false }) {
           </Button>
         </div>
       </Card>
-      {!admin && (
-        <Card>
-          <h2>Deposit & withdrawal requests</h2>
-          {[...requests.deposits, ...requests.withdrawals].length ? (
-            [
-              ...requests.deposits.map((x) => ({ ...x, kind: "Deposit" })),
-              ...requests.withdrawals.map((x) => ({
-                ...x,
-                kind: "Withdrawal",
-              })),
-            ].map((x) => (
-              <div className="list-row" key={x._id}>
-                <div>
-                  <b>
-                    {x.kind} · {rupees(x.amount)}
-                  </b>
-                  <small>
-                    {when(x.createdAt)} · {x.reason || "Awaiting review"}
-                  </small>
-                </div>
-                <Tag>{x.status}</Tag>
-              </div>
-            ))
-          ) : (
-            <Empty
-              title="No requests yet"
-              text="Submitted deposits and withdrawals will appear here, including pending requests."
-            />
-          )}
-        </Card>
-      )}
     </>
   );
 }
