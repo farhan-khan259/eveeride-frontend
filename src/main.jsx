@@ -1211,7 +1211,7 @@ function Tasks() {
             )}
             <h2>{t.task.title}</h2>
             <p>
-              5 seconds · {rupees(t.reward)} reward
+              10 seconds · {rupees(t.reward)} reward
             </p>
             {t.completed && <NextTaskCountdown unlockAt={t.expires} />}
             {!t.completed && (
