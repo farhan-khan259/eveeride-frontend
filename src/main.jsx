@@ -2046,9 +2046,16 @@ function Activity({ admin = false }) {
 }
 function Account() {
   const { user, action, login, impersonating, updateUser } = useApp(),
+    { data: planData, loading: plansLoading } = useData("/plans", {
+      purchases: [],
+    }),
     [editingPassword, setEditingPassword] = useState(false),
     [savingPassword, setSavingPassword] = useState(false),
     [savingAvatar, setSavingAvatar] = useState(false);
+  const hasActivePlan = planData.purchases.some((purchase) => {
+    const now = Date.now();
+    return Date.parse(purchase.start) <= now && Date.parse(purchase.expires) > now;
+  });
   async function changeAvatar(e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -2119,7 +2126,9 @@ function Account() {
               </div>
               <div>
                 <dt>Status</dt>
-                <dd>{user.status}</dd>
+                <dd className={hasActivePlan ? "positive" : "muted"}>
+                  {plansLoading ? "Checking…" : hasActivePlan ? "Active" : "Inactive"}
+                </dd>
               </div>
             </dl>
             {!impersonating && (
