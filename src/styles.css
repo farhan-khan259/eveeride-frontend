@@ -407,6 +407,25 @@ main {
   font-size: 10px;
   letter-spacing: 1px;
 }
+.balance-visibility {
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ffffff2e;
+  border-radius: 8px;
+  background: #ffffff20;
+  color: #fff;
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  z-index: 2;
+}
+.balance-visibility:hover {
+  background: #ffffff32;
+}
+.balance-visibility:focus-visible {
+  outline-color: #fff;
+}
 .balance-number {
   font-family: Manrope, sans-serif;
   font-size: 37px;
@@ -415,6 +434,10 @@ main {
   margin: 16px 0 24px;
   position: relative;
   z-index: 1;
+}
+.balance-number.concealed,
+.balance-breakdown .concealed {
+  letter-spacing: 3px;
 }
 .balance-breakdown {
   display: flex;
@@ -1449,6 +1472,39 @@ video {
   font-size: 11px;
   font-weight: 600;
   color: #486573;
+}
+.field > .password-input-wrap {
+  position: relative;
+  display: block;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+.password-input-wrap input {
+  padding-right: 45px;
+}
+.password-visibility {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #718995;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+}
+.password-visibility:hover {
+  background: #edf7fa;
+  color: #168ba8;
+}
+.password-visibility:focus-visible {
+  outline-width: 2px;
+  outline-offset: 1px;
 }
 input,
 select,

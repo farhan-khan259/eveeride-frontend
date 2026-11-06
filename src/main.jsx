@@ -46,6 +46,7 @@ import {
   Receipt,
   TrendingUp,
   Eye,
+  EyeOff,
   Lock,
   Mail,
   MessageCircle,
@@ -792,7 +793,8 @@ function LaunchAnnouncement({ user }) {
 function Dashboard() {
   const { user } = useApp(),
     { data: d, loading, error } = useData("/dashboard", blank, 10000),
-    [banner, setBanner] = useState(0);
+    [banner, setBanner] = useState(0),
+    [balanceVisible, setBalanceVisible] = useState(true);
   useEffect(() => {
     const i = setInterval(() => setBanner((x) => (x + 1) % 2), 8000);
     return () => clearInterval(i);
@@ -828,13 +830,25 @@ function Dashboard() {
               </span>
               Total available balance
             </span>
-            <span className="balance-chip">PKR</span>
+            <button
+              type="button"
+              className="balance-visibility"
+              onClick={() => setBalanceVisible((visible) => !visible)}
+              aria-label={balanceVisible ? "Hide balances" : "Show balances"}
+              title={balanceVisible ? "Hide balances" : "Show balances"}
+            >
+              {balanceVisible ? <Eye size={18} /> : <EyeOff size={18} />}
+            </button>
           </div>
-          <div className="balance-number">{rupees(d.available)}</div>
+          <div className={`balance-number${balanceVisible ? "" : " concealed"}`}>
+            {balanceVisible ? rupees(d.available) : "••••••"}
+          </div>
           <div className="balance-breakdown">
             <div>
               <span>Withdrawable</span>
-              <b>{rupees(d.withdrawable)}</b>
+              <b className={balanceVisible ? "" : "concealed"}>
+                {balanceVisible ? rupees(d.withdrawable) : "••••••"}
+              </b>
             </div>
           </div>
           <div className="balance-foot">
@@ -1379,10 +1393,28 @@ function Tasks() {
   );
 }
 function Field({ label, children, ...props }) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const isPassword = !children && props.type === "password";
   return (
     <label className="field">
       <span>{label}</span>
-      {children || <input {...props} />}
+      {children || (isPassword ? (
+        <span className="password-input-wrap">
+          <input
+            {...props}
+            type={passwordVisible ? "text" : "password"}
+          />
+          <button
+            type="button"
+            className="password-visibility"
+            onClick={() => setPasswordVisible((visible) => !visible)}
+            aria-label={passwordVisible ? `Hide ${label}` : `Show ${label}`}
+            title={passwordVisible ? "Hide password" : "Show password"}
+          >
+            {passwordVisible ? <EyeOff size={17} /> : <Eye size={17} />}
+          </button>
+        </span>
+      ) : <input {...props} />)}
     </label>
   );
 }
