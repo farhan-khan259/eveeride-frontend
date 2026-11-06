@@ -1989,7 +1989,7 @@ function Activity({ admin = false }) {
       />
       <Card>
         <form
-          className="filter-bar"
+          className="filter-bar activity-filter"
           onSubmit={(e) => {
             e.preventDefault();
             const q = new URLSearchParams();

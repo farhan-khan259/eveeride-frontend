@@ -3770,6 +3770,42 @@ td small {
   .filter-bar select {
     min-width: 0;
   }
+  .activity-filter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: stretch;
+  }
+  .activity-filter input,
+  .activity-filter input:first-child,
+  .activity-filter select,
+  .activity-filter .btn {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+  .activity-filter input,
+  .activity-filter select {
+    min-height: 42px;
+    padding: 10px 9px;
+    font-size: 10px;
+  }
+  .activity-filter select {
+    padding-right: 27px;
+  }
+  .transaction-list .list-row {
+    display: grid;
+    grid-template-columns: 33px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .transaction-list .transaction-amount {
+    max-width: 105px;
+  }
+  .transaction-list .transaction-amount b,
+  .transaction-list .transaction-amount small {
+    text-align: right;
+  }
   .pagination {
     justify-content: space-between;
   }
