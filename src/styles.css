@@ -1761,6 +1761,16 @@ input[type="file"] {
 .team-members-panel {
   margin-top: 22px;
 }
+.team-members-panel > .section-head {
+  align-items: flex-start;
+}
+.team-members-panel > .section-head > div {
+  min-width: 0;
+  flex: 1;
+}
+.team-members-panel > .section-head .tag {
+  flex-shrink: 0;
+}
 .team-level-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(115px, 1fr));
@@ -3901,6 +3911,20 @@ td small {
   }
   .team-members-panel {
     padding: 16px;
+  }
+  .team-members-panel > .section-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 11px;
+  }
+  .team-members-panel > .section-head h2,
+  .team-members-panel > .section-head p {
+    max-width: 100%;
+  }
+  .team-members-panel > .section-head .tag {
+    align-self: flex-start;
+    white-space: nowrap;
   }
   .team-level-tabs {
     grid-template-columns: repeat(4, 105px);
