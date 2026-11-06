@@ -16,6 +16,11 @@
 * {
   box-sizing: border-box;
 }
+img,
+svg,
+video {
+  max-width: 100%;
+}
 body {
   margin: 0;
 }
@@ -2523,7 +2528,8 @@ td small {
     padding: 20px;
   }
   .action-grid small {
-    display: none;
+    display: block;
+    font-size: 7px;
   }
   .quick-actions .section-head .small {
     display: none;
@@ -3196,6 +3202,15 @@ td small {
   .section-head > * {
     min-width: 0;
   }
+  .section-head h2,
+  .section-head p,
+  .plan-header > *,
+  .purchase-meter > *,
+  .target-line > *,
+  .progress-label > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
   .list-row,
   .details > div,
   .bound-account,
@@ -3257,6 +3272,10 @@ td small {
   .profile > div {
     min-width: 0;
   }
+  .list-row > .tag,
+  .transaction-amount {
+    flex-shrink: 0;
+  }
   .list-row b,
   .list-row small,
   .transaction-amount,
@@ -3284,6 +3303,32 @@ td small {
   .invitation-url,
   .support-email {
     max-width: 100%;
+  }
+  .info-strip,
+  .payment-countdown,
+  .next-task-timer,
+  .support-trust-note,
+  .salary-timer {
+    min-width: 0;
+  }
+  .info-strip > div,
+  .payment-countdown > div,
+  .next-task-timer > div,
+  .support-trust-note > div,
+  .salary-timer > div {
+    min-width: 0;
+  }
+  .plan-header,
+  .purchase-meter,
+  .target-line,
+  .progress-label {
+    gap: 10px;
+  }
+  .plan-price {
+    font-size: clamp(34px, 11vw, 44px);
+  }
+  .plan-price span {
+    margin-left: 5px;
   }
   .countdown-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3318,6 +3363,9 @@ td small {
   }
   .pagination > span {
     min-width: 0;
+  }
+  .pagination .btn {
+    flex-shrink: 0;
   }
   .profile {
     gap: 14px;
@@ -3380,17 +3428,197 @@ td small {
   .modal {
     max-width: 100%;
   }
+  .chart-heading,
+  .chart-heading > div,
+  .chart-legend,
+  .promo-row,
+  .button-row {
+    min-width: 0;
+  }
+  .chart-heading > strong {
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+  .chart-legend span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+  }
+  .reset-page {
+    width: 100%;
+    margin-block: 30px;
+    padding-inline: 16px;
+  }
+  .toast {
+    width: calc(100% - 28px);
+    max-width: none;
+  }
 }
-@media (max-width: 420px) {
+@media (max-width: 375px) {
+  header {
+    padding-inline: 10px;
+  }
+  .breadcrumb {
+    font-size: 9px;
+  }
+  main {
+    padding-inline: 12px;
+  }
+  .card,
+  .quick-actions,
+  .plan-card,
+  .promo-card,
+  .legal {
+    padding: 16px;
+  }
+  .page-title h1 {
+    font-size: 22px;
+  }
+  .balance-card {
+    padding-inline: 18px;
+  }
+  .balance-breakdown {
+    gap: 12px;
+  }
+  .balance-breakdown > div + div {
+    padding-left: 12px;
+  }
+  .action-grid > a > span {
+    width: 46px;
+    height: 46px;
+  }
+  .action-grid b {
+    font-size: 10px;
+  }
+  .stat strong {
+    font-size: 15px;
+  }
+  .banner {
+    padding-inline: 20px;
+  }
+  .upcoming-plan {
+    padding: 16px;
+    gap: 11px;
+  }
+  .countdown-grid b {
+    font-size: 14px;
+  }
+  .countdown-grid small {
+    font-size: 6px;
+    letter-spacing: 0.4px;
+  }
+  .stat-grid.four,
+  .level-grid {
+    gap: 10px;
+  }
+  .compact-stat {
+    padding: 15px;
+  }
+  .compact-stat strong {
+    font-size: 18px;
+  }
+  .notification-row {
+    column-gap: 9px;
+  }
+  .notification-row > .btn {
+    padding-inline: 10px;
+    font-size: 10px;
+  }
+  .support-contact-card {
+    padding: 20px;
+  }
+  .admin-main {
+    padding-inline: 10px;
+  }
   .admin-user-actions {
-    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .admin-user-actions .btn {
+    font-size: 9px;
   }
   .admin-main .filter-bar {
-    display: grid;
-    grid-template-columns: 1fr;
+    gap: 8px;
   }
   .admin-main .filter-bar .btn {
-    width: 100%;
+    padding-inline: 10px;
+  }
+}
+@media (max-width: 340px) {
+  .header-right {
+    gap: 5px;
+  }
+  .breadcrumb {
+    gap: 3px;
+  }
+  main {
+    padding-inline: 10px;
+  }
+  .card,
+  .quick-actions,
+  .plan-card,
+  .promo-card,
+  .legal {
+    padding: 14px;
+  }
+  .balance-card {
+    padding-inline: 15px;
+  }
+  .balance-breakdown span {
+    font-size: 9px;
+  }
+  .balance-breakdown b {
+    font-size: 13px;
+  }
+  .action-grid {
+    gap: 3px;
+  }
+  .action-grid > a > span {
+    width: 43px;
+    height: 43px;
+  }
+  .action-grid small {
+    display: none;
+  }
+  .stat {
+    padding-inline: 7px;
+  }
+  .stat-label {
+    font-size: 8px;
+  }
+  .stat strong {
+    font-size: 14px;
+  }
+  .bottom-nav a {
+    font-size: 7px;
+  }
+  .notification-row {
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    column-gap: 8px;
+  }
+  .notification-row > .btn {
+    min-height: 34px;
+    padding-inline: 8px;
+    font-size: 9px;
+  }
+  .salary-cycle-metric {
+    padding-inline: 6px;
+  }
+  .salary-cycle-metric b {
+    font-size: 12px;
+  }
+  .admin-header .brand > div {
+    font-size: 15px;
+  }
+  .admin-header-actions .btn {
+    padding-inline: 8px;
+    font-size: 9px;
+  }
+  .admin-users-table td {
+    grid-template-columns: 70px minmax(0, 1fr);
   }
 }
 @media (prefers-reduced-motion: reduce) {
