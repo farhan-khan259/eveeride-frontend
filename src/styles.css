@@ -2138,14 +2138,14 @@ td small {
 }
 .launch-modal > .section-head {
   margin: 0;
-  padding: 18px 22px;
+  padding: 14px 22px;
   border-bottom: 1px solid var(--line);
 }
 .launch-announcement-hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: 28px 28px 26px;
+  padding: 21px 28px 19px;
   background: linear-gradient(125deg, #073f5a, #0587a3 58%, #02b6ce);
   color: #fff;
 }
@@ -2165,7 +2165,7 @@ td small {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   padding: 6px 9px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
@@ -2178,8 +2178,8 @@ td small {
 }
 .launch-announcement-hero h2 {
   max-width: 430px;
-  margin: 0 0 8px;
-  font-size: 28px;
+  margin: 0 0 5px;
+  font-size: 25px;
   letter-spacing: -0.9px;
 }
 .launch-announcement-hero p {
@@ -2191,17 +2191,18 @@ td small {
 .launch-announcement-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  padding: 20px 22px 10px;
+  gap: 8px;
+  padding: 14px 22px 7px;
 }
 .launch-announcement-grid > div {
   min-width: 0;
-  padding: 15px;
+  padding: 11px 13px;
   border: 1px solid var(--line);
   border-radius: 11px;
   background: #f8fcfd;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
+  grid-template-rows: 30px auto;
   column-gap: 10px;
   align-items: center;
 }
@@ -2221,19 +2222,21 @@ td small {
   overflow-wrap: anywhere;
 }
 .launch-announcement-grid small {
+  align-self: end;
   color: var(--muted);
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
 }
 .launch-announcement-grid strong {
-  margin-top: 3px;
+  align-self: start;
+  margin-top: 4px;
   color: var(--ink);
   font: 700 13px Manrope, sans-serif;
 }
 .launch-channel-button {
-  margin: 10px 22px;
-  padding: 14px 15px;
+  margin: 7px 22px;
+  padding: 11px 14px;
   border: 1px solid #bfe5ec;
   border-radius: 11px;
   background: linear-gradient(120deg, #eaf9fb, #f6fcfd);
@@ -2266,7 +2269,9 @@ td small {
 }
 .launch-continue {
   width: calc(100% - 44px);
-  margin: 4px 22px 22px;
+  min-height: 38px;
+  margin: 3px 22px 15px;
+  padding-block: 9px;
 }
 .proof-image {
   max-width: 100%;
@@ -3606,23 +3611,24 @@ td small {
     padding: 0;
   }
   .launch-modal > .section-head {
-    padding: 14px 16px;
+    padding: 11px 16px;
   }
   .launch-announcement-hero {
-    padding: 22px 18px;
+    padding: 17px 18px;
   }
   .launch-announcement-hero h2 {
     font-size: 23px;
   }
   .launch-announcement-grid {
     gap: 8px;
-    padding: 15px 14px 7px;
+    padding: 10px 14px 5px;
   }
   .launch-announcement-grid > div {
-    padding: 12px 10px;
+    padding: 9px 10px;
     grid-template-columns: 30px minmax(0, 1fr);
+    grid-template-rows: 28px auto;
     column-gap: 8px;
-    min-height: 96px;
+    min-height: 78px;
   }
   .launch-announcement-grid > div > span {
     width: 30px;
@@ -3640,8 +3646,8 @@ td small {
     word-break: normal;
   }
   .launch-channel-button {
-    margin: 8px 14px;
-    padding: 12px;
+    margin: 6px 14px;
+    padding: 9px 12px;
     gap: 9px;
   }
   .launch-channel-button strong {
@@ -3650,7 +3656,7 @@ td small {
   }
   .launch-continue {
     width: calc(100% - 28px);
-    margin: 3px 14px 15px;
+    margin: 2px 14px 11px;
   }
   .chart-heading,
   .chart-heading > div,
@@ -3839,13 +3845,13 @@ td small {
     font-size: 9px;
   }
   .launch-modal > .section-head {
-    padding: 12px 14px;
+    padding: 10px 14px;
   }
   .launch-modal > .section-head h2 {
     font-size: 14px;
   }
   .launch-announcement-hero {
-    padding: 19px 15px;
+    padding: 15px;
   }
   .launch-announcement-badge {
     gap: 5px;
@@ -3861,9 +3867,10 @@ td small {
     padding-inline: 10px;
   }
   .launch-announcement-grid > div {
-    min-height: 92px;
-    padding: 10px 7px;
+    min-height: 76px;
+    padding: 8px 7px;
     grid-template-columns: 28px minmax(0, 1fr);
+    grid-template-rows: 27px auto;
     column-gap: 6px;
   }
   .launch-announcement-grid > div > span {
@@ -3879,7 +3886,7 @@ td small {
   }
   .launch-channel-button {
     margin-inline: 10px;
-    padding: 11px 10px;
+    padding: 8px 10px;
   }
   .launch-channel-button small {
     font-size: 6px;
