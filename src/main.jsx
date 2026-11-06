@@ -110,6 +110,7 @@ function App() {
     }
   }
   async function login(data) {
+    sessionStorage.removeItem(`eveeride.launch-announcement.seen:${data.user.id}`);
     sessionStorage.setItem("eveeride.token", data.token);
     setUser(data.user);
     refresh();
@@ -145,6 +146,9 @@ function App() {
     try {
       await api.post("/auth/logout");
     } catch {}
+    if (user?.id) {
+      sessionStorage.removeItem(`eveeride.launch-announcement.seen:${user.id}`);
+    }
     sessionStorage.removeItem("eveeride.token");
     setUser(null);
     refresh();
@@ -522,6 +526,7 @@ function Button({
   type = "button",
   secondary = false,
   disabled = false,
+  className = "",
   ...props
 }) {
   return (
@@ -529,7 +534,7 @@ function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={"btn " + (secondary ? "secondary" : "")}
+      className={`btn${secondary ? " secondary" : ""}${className ? ` ${className}` : ""}`}
       {...props}
     >
       {children}
@@ -719,6 +724,71 @@ function UpcomingPlan({ compact = false }) {
     </section>
   );
 }
+function LaunchAnnouncement({ user }) {
+  const storageKey = `eveeride.launch-announcement.seen:${user?.id}`;
+  const [open, setOpen] = useState(
+    () => Boolean(user?.id) && sessionStorage.getItem(storageKey) !== "1",
+  );
+
+  function dismiss() {
+    sessionStorage.setItem(storageKey, "1");
+    setOpen(false);
+  }
+
+  if (!open) return null;
+  return (
+    <Modal title="EveeRide launch" className="launch-modal" close={dismiss}>
+      <div className="launch-announcement-hero">
+        <span className="launch-announcement-badge">
+          <TrendingUp size={15} /> Official launch announcement
+        </span>
+        <h2>Smart tasks. Better growth.</h2>
+        <p>
+          EveeRide is launching with daily tasks, transparent earnings and a
+          simple way to track your progress.
+        </p>
+      </div>
+      <div className="launch-announcement-grid">
+        <div>
+          <span><Clock size={18} /></span>
+          <small>Launching date</small>
+          <strong>10 November 2026</strong>
+        </div>
+        <div>
+          <span><ArrowDownLeft size={18} /></span>
+          <small>Minimum deposit</small>
+          <strong>510 PKR</strong>
+        </div>
+        <div>
+          <span><ArrowUpRight size={18} /></span>
+          <small>Minimum withdrawal</small>
+          <strong>100 PKR</strong>
+        </div>
+        <div>
+          <span><Gift size={18} /></span>
+          <small>Member benefits</small>
+          <strong>Daily tasks & earnings</strong>
+        </div>
+      </div>
+      <a
+        className="launch-channel-button"
+        href={WHATSAPP_CHANNEL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <MessageCircle size={20} />
+        <span>
+          <small>OFFICIAL WHATSAPP CHANNEL</small>
+          <strong>Join for announcements and updates</strong>
+        </span>
+        <ArrowUpRight size={18} />
+      </a>
+      <Button className="launch-continue" onClick={dismiss}>
+        Continue to dashboard <ArrowRight size={17} />
+      </Button>
+    </Modal>
+  );
+}
 function Dashboard() {
   const { user } = useApp(),
     { data: d, loading, error } = useData("/dashboard", blank, 10000),
@@ -729,6 +799,7 @@ function Dashboard() {
   }, []);
   return (
     <>
+      <LaunchAnnouncement user={user} />
       <PageTitle
         title={
           user
