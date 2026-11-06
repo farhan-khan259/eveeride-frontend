@@ -1019,12 +1019,13 @@ function Plans({ owned = false }) {
             </Card>
             <UpcomingPlan />
             <div className="plan-update-note" lang="ur" dir="rtl">
-              <span className="plan-update-note-icon">
-                <Plus size={19} />
-              </span>
               <div>
                 <small>نئے پلان کی تازہ کاری</small>
-                <strong>ہر 10 دن بعد ایک نیا پلان شامل کیا جائے گا۔</strong>
+                <strong>
+                  1۔ ہر 10 دن بعد ایک نیا پلان شامل کیا جائے گا۔
+                  <br />
+                  2۔ ٹوٹل 22 پلان متعارف کرائے جائیں گے۔
+                </strong>
               </div>
             </div>
           </div>
