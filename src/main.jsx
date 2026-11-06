@@ -1111,52 +1111,55 @@ function Plans({ owned = false }) {
         </Card>
       ) : (
         <div className="plan-layout">
-          <Card className="plan-card">
-            <div className="plan-header">
-              <span className="square-icon">
-                <Layers size={27} />
-              </span>
-              <Tag>STARTER SERIES</Tag>
-            </div>
-            <h2>EveeRide</h2>
-            <p>Start with one daily task.</p>
-            <div className="plan-price">
-              {(plan.price / 100).toLocaleString("en-PK")} PKR
-              <span>/ {plan.days} days</span>
-            </div>
-            <div className="plan-details">
-              {[
-                ["Daily tasks", `${plan.dailyTasks} per day`],
-                ["Reward per completed task", rupees(plan.reward)],
-                ["Plan duration", `${plan.days} days`],
-                ["Total eligible tasks", String(plan.dailyTasks * plan.days)],
-                ["Total possible task rewards", rupees(plan.reward * plan.dailyTasks * plan.days)],
-                ["Maximum purchases", `${plan.maxPurchases} per account`],
-              ].map(([a, b]) => (
-                <div key={a}>
-                  <span>{a}</span>
-                  <b>{b}</b>
-                </div>
-              ))}
-            </div>
-            <div className="purchase-meter">
-              <span>Your purchase count</span>
-              <b>{data.purchases.length}/{plan.maxPurchases} purchases</b>
-            </div>
-            <Button
-              disabled={data.purchases.length >= plan.maxPurchases}
-              onClick={() => setConfirm(true)}
-            >
-              {data.purchases.length >= plan.maxPurchases
-                ? "Purchase limit reached"
-                : "Activate Starter Plan"}
-              <ArrowRight size={17} />
-            </Button>
-            <small className="center muted">
-              {data.subscribers} verified plan purchaser
-              {data.subscribers !== 1 ? "s" : ""}
-            </small>
-          </Card>
+          <div className="plan-primary-column">
+            <Card className="plan-card">
+              <div className="plan-header">
+                <span className="square-icon">
+                  <Layers size={27} />
+                </span>
+                <Tag>STARTER SERIES</Tag>
+              </div>
+              <h2>EveeRide</h2>
+              <p>Start with one daily task.</p>
+              <div className="plan-price">
+                {(plan.price / 100).toLocaleString("en-PK")} PKR
+                <span>/ {plan.days} days</span>
+              </div>
+              <div className="plan-details">
+                {[
+                  ["Daily tasks", `${plan.dailyTasks} per day`],
+                  ["Reward per completed task", rupees(plan.reward)],
+                  ["Plan duration", `${plan.days} days`],
+                  ["Total eligible tasks", String(plan.dailyTasks * plan.days)],
+                  ["Total possible task rewards", rupees(plan.reward * plan.dailyTasks * plan.days)],
+                  ["Maximum purchases", `${plan.maxPurchases} per account`],
+                ].map(([a, b]) => (
+                  <div key={a}>
+                    <span>{a}</span>
+                    <b>{b}</b>
+                  </div>
+                ))}
+              </div>
+              <div className="purchase-meter">
+                <span>Your purchase count</span>
+                <b>{data.purchases.length}/{plan.maxPurchases} purchases</b>
+              </div>
+              <Button
+                disabled={data.purchases.length >= plan.maxPurchases}
+                onClick={() => setConfirm(true)}
+              >
+                {data.purchases.length >= plan.maxPurchases
+                  ? "Purchase limit reached"
+                  : "Activate Starter Plan"}
+                <ArrowRight size={17} />
+              </Button>
+              <small className="center muted">
+                {data.subscribers} verified plan purchaser
+                {data.subscribers !== 1 ? "s" : ""}
+              </small>
+            </Card>
+            <UpcomingPlan />
+          </div>
           <div>
             <Card>
               <ShieldCheck className="cyan" size={30} />
@@ -1199,7 +1202,6 @@ function Plans({ owned = false }) {
           </div>
         </div>
       )}
-      {!owned && <UpcomingPlan />}
       {confirm && (
         <Modal title="Activate Starter Plan?" close={() => setConfirm(false)}>
           <p>

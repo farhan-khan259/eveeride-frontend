@@ -1106,7 +1106,7 @@ main {
 }
 .countdown-grid b,
 .countdown-grid small { display: block; }
-.countdown-grid b { color: var(--ink); font: 700 17px Manrope, sans-serif; }
+.countdown-grid b { color: #d64545; font: 700 17px Manrope, sans-serif; }
 .countdown-grid small {
   margin-top: 2px;
   color: var(--muted);
@@ -1212,6 +1212,37 @@ footer {
   grid-template-columns: minmax(300px, 430px) 1fr;
   gap: 26px;
   max-width: 1000px;
+}
+.plan-primary-column {
+  min-width: 0;
+}
+.plan-primary-column > .plan-card {
+  margin-bottom: 0;
+}
+.plan-primary-column > .upcoming-plan {
+  width: 100%;
+  margin-top: 18px;
+  padding: 20px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+}
+.plan-primary-column > .upcoming-plan .upcoming-plan-icon {
+  width: 50px;
+  height: 50px;
+}
+.plan-primary-column > .upcoming-plan .upcoming-plan-copy h2 {
+  font-size: 18px;
+}
+.plan-primary-column > .upcoming-plan .upcoming-plan-status {
+  grid-column: 1 / -1;
+  min-width: 0;
+  text-align: left;
+}
+.plan-primary-column > .upcoming-plan .countdown-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.plan-primary-column > .upcoming-plan .countdown-grid > span {
+  min-width: 0;
 }
 .plan-card {
   padding: 30px;
