@@ -19,6 +19,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Users,
+  UsersRound,
   Headphones,
   ChevronRight,
   ArrowRight,
@@ -52,6 +53,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Download,
+  Upload,
   ExternalLink,
   Camera,
 } from "lucide-react";
@@ -727,10 +729,10 @@ function Dashboard() {
           </div>
           <div className="action-grid">
             {[
-              ["/deposit", "Deposit", ArrowDownLeft, "Add to your balance"],
-              ["/withdraw", "Withdraw", ArrowUpRight, "Request a payout"],
-              ["/team", "My team", Users, "Grow together"],
-              ["/support", "Support", Headphones, "We’re here to help"],
+              ["/deposit", "Deposit", Download],
+              ["/withdraw", "Withdraw", Upload],
+              ["/team", "My team", UsersRound],
+              ["/support", "Support", Headphones],
             ].map(([to, n, I, sub]) => (
               <Link to={to} key={to}>
                 <span>
@@ -748,7 +750,7 @@ function Dashboard() {
           icon={Play}
           label="Task earnings"
           value={d.totals.task_earning}
-          description="From completed daily tasks"
+         
         />
         <MoneyStat
           icon={Users}
@@ -757,13 +759,13 @@ function Dashboard() {
             (d.totals.team_commission || 0) +
             (d.totals.team_task_commission || 0)
           }
-          description="Approved team commissions"
+          
         />
         <MoneyStat
           icon={Crown}
           label="Salary bonuses"
           value={d.totals.salary_bonus}
-          description="One-time milestone rewards"
+         
         />
       </div>
       <WhatsAppChannel />
@@ -1158,11 +1160,22 @@ function Tasks() {
       try {
         const video = await api.get(`/files/tasks/${t.task._id}`, {
           responseType: "blob",
+          timeout: 120000,
         });
+        if (!video.data.size || !video.data.type.startsWith("video/"))
+          throw new Error("The server did not return a video file.");
         setUrls((x) => ({ ...x, [t._id]: URL.createObjectURL(video.data) }));
         setStarted((x) => ({ ...x, [t._id]: true }));
-      } catch {
-        tell("Video could not be loaded.", true);
+      } catch (error) {
+        const status = error.response?.status;
+        tell(
+          status === 404
+            ? "This task video is missing. Please ask the administrator to upload it again."
+            : status === 403
+              ? "You are not authorized to watch this task video."
+              : "Video could not be loaded. Please try again.",
+          true,
+        );
       }
     }
   }
@@ -1270,27 +1283,7 @@ function useHours() {
   }, [pub]);
   return state;
 }
-function Hours() {
-  const { pub } = useApp();
-  return (
-    <div className="hours-note">
-      <Clock size={18} />
-      <div>
-        <b>8:00 AM – 5:00 PM · Pakistan time</b>
-        <small>
-          Deposits and withdrawals are accepted only during these hours.
-          {pub
-            ? " Current server status: " +
-              (pub.hoursOpen ? "Open" : "Closed") +
-              "."
-            : ""}
-        </small>
-      </div>
-    </div>
-  );
-}
 function Deposit() {
-  const open = useHours();
   const { data: p, error } = useData("/payments", { methods: {} }),
     { action, tell } = useApp(),
     [order, setOrder] = useState(null),
@@ -1369,16 +1362,20 @@ function Deposit() {
                 <Field label="Payment method">
                   <select name="method" required>
                     <option value="">Select a method</option>
-                    {["EasyPaisa", "JazzCash", "Mashreq"].map((m) => (
-                      <option key={m} value={m}>
-                        {m}
-                        {!p.methods[m] ? " · not configured" : ""}
+                    {[
+                      ["EasyPaisa", "EasyPaisa"],
+                      ["JazzCash", "JazzCash"],
+                      ["Mashreq", "Bank Account"],
+                    ].map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                        {!p.methods[value] ? " · not configured" : ""}
                       </option>
                     ))}
                   </select>
                 </Field>
                 <p className="muted small">Minimum deposit is Rs 510.00</p>
-                <Submit busy={busy} disabled={open === false}>
+                <Submit busy={busy}>
                   Proceed to payment
                 </Submit>
               </>
@@ -1392,7 +1389,13 @@ function Deposit() {
                 <dl className="details">
                   {[
                     ["Order amount", rupees(order.order.amount), false],
-                    ["Payment method", order.order.method, false],
+                    [
+                      "Payment method",
+                      order.order.method === "Mashreq"
+                        ? "Bank Account"
+                        : order.order.method,
+                      false,
+                    ],
                     ["Account title", order.account.title, true],
                     ["Account number / IBAN", order.account.number, true],
                     ["Bank", order.account.bank || "—", false],
@@ -1431,7 +1434,7 @@ function Deposit() {
                   accept="image/png,image/jpeg,image/webp"
                   required
                 />
-                <Submit busy={busy} disabled={open === false || seconds === 0}>
+                <Submit busy={busy} disabled={seconds === 0}>
                   Confirm deposit
                 </Submit>
                 <Button secondary onClick={() => setOrder(null)}>
@@ -1442,7 +1445,6 @@ function Deposit() {
           </form>
         </Card>
         <div>
-          <Hours />
           <Card className="soft-card">
             <h3>Verification comes first.</h3>
             <p>
@@ -1569,7 +1571,6 @@ function Withdraw() {
           )}
         </Card>
         <div>
-          <Hours />
           <Card>
             <h2>Clear payout rules</h2>
             <ul className="rules">
@@ -2357,10 +2358,9 @@ function Legal({ privacy = false }) {
             </p>
             <h2>Operating hours</h2>
             <p>
-              Deposit and withdrawal submissions are accepted from 8:00 AM until
-              5:00 PM Asia/Karachi, enforced by the server. Financial operations
-              are preserved in an immutable ledger. Expired orders remain
-              auditable.
+              Withdrawals are accepted from 8:00 AM until 5:00 PM Asia/Karachi,
+              enforced by the server. Financial operations are preserved in an
+              immutable ledger. Expired orders remain auditable.
             </p>
             <h2>Support and disputes</h2>
             <p>
@@ -2738,6 +2738,16 @@ function AdminDashboard() {
       <Card>
         <h2>Task video upload</h2>
         <p>Upload the MP4 video users must complete for the assigned task.</p>
+        <p className="muted">
+          To start clean, type DELETE below to remove all previous task videos
+          and assignments before uploading a new video.
+        </p>
+        <ApiForm
+          endpoint="/admin/videos"
+          method="delete"
+          fields={[["confirmation", "Type DELETE to remove all previous videos"]]}
+          label="Delete all previous videos"
+        />
         <ApiForm
           endpoint="/admin/videos"
           multipart
@@ -2849,7 +2859,11 @@ function ApiForm({
         const f = new FormData(e.target);
         let b = multipart ? f : Object.fromEntries(f);
         if (transform) b = transform(b);
-        const r = await action(() => api[method](endpoint, b));
+        const r = await action(() =>
+          method === "delete"
+            ? api.delete(endpoint, { data: b })
+            : api[method](endpoint, b),
+        );
         if (r) {
           e.target.reset();
           done?.(r);

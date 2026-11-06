@@ -1432,28 +1432,6 @@ input::placeholder {
 input[type="file"] {
   font-size: 10px;
 }
-.hours-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 20px;
-  border: 1px solid #cce6f0;
-  background: #e8f6fb;
-  border-radius: 12px;
-  color: #428296;
-  margin-bottom: 22px;
-}
-.hours-note b {
-  font-size: 12px;
-  display: block;
-}
-.hours-note small {
-  font-size: 10px;
-  line-height: 1.7;
-  display: block;
-  margin-top: 8px;
-  color: #7495a3;
-}
 .details {
   margin: 25px 0;
 }
