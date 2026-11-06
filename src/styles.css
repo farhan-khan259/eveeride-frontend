@@ -263,7 +263,7 @@ header {
   width: 35px;
   height: 35px;
   border-radius: 12px;
-  background: #e3f4fb;
+  background: #fff;
   color: #317b91;
   display: grid;
   place-items: center;
@@ -279,7 +279,8 @@ header {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 5px;
   border-radius: inherit;
 }
 main {
@@ -2275,31 +2276,6 @@ td small {
 }
 .profile p {
   margin: 0;
-}
-.profile-photo-control {
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-}
-.profile-photo-button {
-  color: #317b91;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 9px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.profile-photo-button input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-.profile-photo-button:has(input:disabled) {
-  opacity: 0.55;
-  cursor: wait;
 }
 .account-security {
   margin-top: 28px;

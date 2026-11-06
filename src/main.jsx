@@ -56,7 +56,6 @@ import {
   Download,
   Upload,
   ExternalLink,
-  Camera,
 } from "lucide-react";
 import { api, rupees, when, blank } from "./api.js";
 import "./styles.css";
@@ -494,30 +493,9 @@ function Tag({ children }) {
   return <span className="tag">{children}</span>;
 }
 function ProfileAvatar({ user, large = false }) {
-  const [src, setSrc] = useState("");
-  useEffect(() => {
-    let active = true,
-      objectUrl = "";
-    if (!user?.avatarVersion) {
-      setSrc("");
-      return () => {};
-    }
-    api
-      .get("/account/avatar", { responseType: "blob" })
-      .then((response) => {
-        if (!active) return;
-        objectUrl = URL.createObjectURL(response.data);
-        setSrc(objectUrl);
-      })
-      .catch(() => active && setSrc(""));
-    return () => {
-      active = false;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [user?.avatarVersion]);
   return (
     <span className={`avatar${large ? " large" : ""}`}>
-      {src ? <img src={src} alt="" /> : user?.name?.slice(0, 1) || "U"}
+      <img src="/icons/eveeride-mark.png" alt="EveeRide logo" />
     </span>
   );
 }
@@ -2150,28 +2128,16 @@ function Activity({ admin = false }) {
   );
 }
 function Account() {
-  const { user, action, login, impersonating, updateUser } = useApp(),
+  const { user, action, login, impersonating } = useApp(),
     { data: planData, loading: plansLoading } = useData("/plans", {
       purchases: [],
     }),
     [editingPassword, setEditingPassword] = useState(false),
-    [savingPassword, setSavingPassword] = useState(false),
-    [savingAvatar, setSavingAvatar] = useState(false);
+    [savingPassword, setSavingPassword] = useState(false);
   const hasActivePlan = planData.purchases.some((purchase) => {
     const now = Date.now();
     return Date.parse(purchase.start) <= now && Date.parse(purchase.expires) > now;
   });
-  async function changeAvatar(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const form = new FormData();
-    form.append("avatar", file);
-    setSavingAvatar(true);
-    const result = await action(() => api.post("/account/avatar", form));
-    if (result?.user) updateUser(result.user);
-    setSavingAvatar(false);
-    e.target.value = "";
-  }
   async function changePassword(e) {
     e.preventDefault();
     const form = e.currentTarget;
@@ -2196,25 +2162,7 @@ function Account() {
         {user ? (
           <>
             <div className="profile">
-              <div className="profile-photo-control">
-                <ProfileAvatar user={user} large />
-                {!impersonating && (
-                  <label className="profile-photo-button">
-                    <input
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp"
-                      onChange={changeAvatar}
-                      disabled={savingAvatar}
-                    />
-                    <Camera size={14} />
-                    {savingAvatar
-                      ? "Uploading…"
-                      : user.avatarVersion
-                        ? "Change photo"
-                        : "Add photo"}
-                  </label>
-                )}
-              </div>
+              <ProfileAvatar user={user} large />
               <div>
                 <h2>{user.name}</h2>
                 <p>@{user.username}</p>
