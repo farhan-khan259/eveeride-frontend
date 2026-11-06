@@ -2202,9 +2202,10 @@ td small {
   background: #f8fcfd;
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
-  grid-template-rows: 30px auto;
+  grid-template-rows: 17px auto;
   column-gap: 10px;
   align-items: center;
+  align-content: center;
 }
 .launch-announcement-grid > div > span {
   grid-row: 1 / 3;
@@ -2227,6 +2228,7 @@ td small {
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 0.7px;
+  white-space: nowrap;
 }
 .launch-announcement-grid strong {
   align-self: start;
@@ -3626,7 +3628,7 @@ td small {
   .launch-announcement-grid > div {
     padding: 9px 10px;
     grid-template-columns: 30px minmax(0, 1fr);
-    grid-template-rows: 28px auto;
+    grid-template-rows: 16px auto;
     column-gap: 8px;
     min-height: 78px;
   }
@@ -3870,7 +3872,7 @@ td small {
     min-height: 76px;
     padding: 8px 7px;
     grid-template-columns: 28px minmax(0, 1fr);
-    grid-template-rows: 27px auto;
+    grid-template-rows: 15px auto;
     column-gap: 6px;
   }
   .launch-announcement-grid > div > span {
