@@ -3080,6 +3080,261 @@ td small {
     font-size: 11px;
   }
 }
+@media (max-width: 425px) {
+  html,
+  body,
+  #root,
+  .app,
+  .workspace,
+  .admin-shell {
+    width: 100%;
+    max-width: 100%;
+  }
+  body {
+    overflow-x: hidden;
+  }
+  header {
+    padding-inline: 13px;
+    gap: 9px;
+  }
+  .mobile-menu,
+  .header-right,
+  .header-right > * {
+    flex-shrink: 0;
+  }
+  .breadcrumb {
+    min-width: 0;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .breadcrumb b {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-right {
+    gap: 8px;
+  }
+  main {
+    width: 100%;
+    min-width: 0;
+    padding: 20px 14px 90px;
+  }
+  .page-title {
+    min-width: 0;
+    gap: 10px;
+  }
+  .page-title > div {
+    min-width: 0;
+  }
+  .page-title h1 {
+    font-size: 23px;
+    overflow-wrap: anywhere;
+  }
+  .setup-note,
+  .impersonation-banner {
+    min-width: 0;
+  }
+  .impersonation-banner {
+    padding-inline: 14px;
+    gap: 7px;
+    font-size: 9px;
+  }
+  .impersonation-banner .btn {
+    flex-shrink: 0;
+    padding-inline: 9px;
+  }
+  .card,
+  .quick-actions,
+  .plan-card,
+  .promo-card,
+  .legal {
+    padding: 18px;
+  }
+  .balance-card {
+    padding: 22px 20px;
+  }
+  .balance-number {
+    font-size: clamp(29px, 9vw, 35px);
+  }
+  .balance-breakdown {
+    gap: 16px;
+  }
+  .balance-breakdown > div + div {
+    padding-left: 16px;
+  }
+  .balance-breakdown b,
+  .balance-breakdown span {
+    overflow-wrap: anywhere;
+  }
+  .action-grid {
+    gap: 6px;
+  }
+  .action-grid > a {
+    min-width: 0;
+  }
+  .action-grid > a > span {
+    width: 49px;
+    height: 49px;
+  }
+  .action-grid b,
+  .action-grid small {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .stat-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .stat {
+    min-width: 0;
+    padding-inline: 9px;
+  }
+  .stat strong,
+  .compact-stat strong {
+    overflow-wrap: anywhere;
+  }
+  .section-head > * {
+    min-width: 0;
+  }
+  .list-row,
+  .details > div,
+  .bound-account,
+  .profile,
+  .notification-row {
+    min-width: 0;
+  }
+  .list-row > div:nth-child(2),
+  .transaction-amount,
+  .details dt,
+  .details dd,
+  .bound-account > div,
+  .profile > div {
+    min-width: 0;
+  }
+  .list-row b,
+  .list-row small,
+  .transaction-amount,
+  .details dd {
+    overflow-wrap: anywhere;
+  }
+  .details > div {
+    gap: 12px;
+  }
+  .details dt {
+    flex: 0 0 42%;
+  }
+  .details dd {
+    flex: 1 1 auto;
+  }
+  .details dd:has(.detail-copy) {
+    flex-wrap: wrap;
+  }
+  .account-number-cell,
+  .date-cell {
+    min-width: 0;
+    white-space: normal;
+  }
+  .team-invite-copy,
+  .invitation-url,
+  .support-email {
+    max-width: 100%;
+  }
+  .countdown-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .countdown-grid > span {
+    padding-inline: 4px;
+  }
+  .countdown-grid b {
+    font-size: 15px;
+  }
+  .bottom-nav a {
+    min-width: 0;
+    flex: 1 1 0;
+    padding-inline: 3px;
+  }
+  .bottom-nav a span,
+  .bottom-nav a {
+    white-space: nowrap;
+  }
+  .salary-cycle-metric {
+    min-width: 0;
+    padding-inline: 8px;
+  }
+  .filter-bar input,
+  .filter-bar input:first-child,
+  .filter-bar select {
+    min-width: 0;
+  }
+  .pagination {
+    justify-content: space-between;
+  }
+  .pagination > span {
+    min-width: 0;
+  }
+  .profile {
+    gap: 14px;
+  }
+  .profile h2 {
+    font-size: 21px;
+  }
+  .avatar.large {
+    width: 62px;
+    height: 62px;
+    flex-shrink: 0;
+  }
+  .auth-form {
+    width: 100%;
+    padding-inline: 20px;
+  }
+  .auth-mobile-brand {
+    margin-bottom: 42px;
+  }
+  .admin-header {
+    padding-inline: 10px;
+    gap: 8px;
+  }
+  .admin-header-brand,
+  .admin-header-actions {
+    min-width: 0;
+  }
+  .admin-header .brand {
+    min-width: 0;
+  }
+  .admin-header .brand-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .admin-header .brand > div {
+    font-size: 17px;
+  }
+  .admin-header-actions .btn {
+    padding-inline: 10px;
+  }
+  .admin-main {
+    max-width: 100%;
+    padding: 20px 12px 30px;
+  }
+  .admin-main fieldset {
+    min-width: 0;
+    padding: 15px;
+  }
+  .admin-users-table td {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 9px;
+  }
+  .request-tabs button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .modal-backdrop {
+    padding: 10px;
+  }
+  .modal {
+    max-width: 100%;
+  }
+}
 @media (max-width: 420px) {
   .admin-user-actions {
     grid-template-columns: 1fr;
