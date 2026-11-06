@@ -1618,7 +1618,21 @@ function Team() {
     }),
     { user, pub, tell } = useApp(),
     depositCommissionRates = pub?.commissions?.deposit || [7, 3, 2, 2],
-    teamEarningRate = pub?.commissions?.teamEarning?.[0] || 4;
+    teamEarningRate = pub?.commissions?.teamEarning?.[0] || 4,
+    [selectedLevel, setSelectedLevel] = useState(1),
+    [memberFilter, setMemberFilter] = useState("all");
+  const levelMembers = data.members.filter(
+      (member) => member.level === selectedLevel,
+    ),
+    visibleMembers = levelMembers.filter(
+      (member) =>
+        memberFilter === "all" ||
+        (memberFilter === "active" ? member.active : !member.active),
+    ),
+    levelDeposits = levelMembers.reduce(
+      (total, member) => total + (member.deposits || 0),
+      0,
+    );
   return (
     <>
       <PageTitle
@@ -1710,51 +1724,91 @@ function Team() {
           </Card>
         ))}
       </div>
-      <div className="level-grid">
-        {data.levels.map((n, i) => (
-          <Card key={i}>
-            <span className="eyebrow">LEVEL {i + 1}</span>
-            <h2>
-              {n} <small>members</small>
-            </h2>
-            <p>
-              {i ? "Invited through level " + i : "Your direct invitations"}
-            </p>
-          </Card>
-        ))}
-      </div>
-      <Card>
+      <Card className="team-members-panel">
         <div className="section-head">
-          <h2>Your team members</h2>
+          <div>
+            <h2>Your team members</h2>
+            <p>Review member activity and deposits across all four levels.</p>
+          </div>
           <Tag>4 REFERRAL LEVELS</Tag>
         </div>
-        {data.members.length ? (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Level</th>
-                  <th>Total deposit</th>
-                  <th>Joined</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.members.map((m, i) => (
-                  <tr key={i}>
-                    <td>{m.name}</td>
-                    <td>Level {m.level}</td>
-                    <td>{rupees(m.deposits)}</td>
-                    <td>{when(m.joined)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="team-level-tabs" role="tablist" aria-label="Referral level">
+          {data.levels.map((count, index) => {
+            const level = index + 1;
+            return (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={selectedLevel === level}
+                className={selectedLevel === level ? "active" : ""}
+                onClick={() => {
+                  setSelectedLevel(level);
+                  setMemberFilter("all");
+                }}
+                key={level}
+              >
+                <strong>Level {level}</strong>
+                <small>{count} {count === 1 ? "member" : "members"}</small>
+              </button>
+            );
+          })}
+        </div>
+        <div className="team-level-summary">
+          <div>
+            <small>Total deposit</small>
+            <strong>{rupees(levelDeposits)}</strong>
+          </div>
+          <div>
+            <small>Active members</small>
+            <strong>{levelMembers.filter((member) => member.active).length}</strong>
+          </div>
+          <div>
+            <small>Commission rate</small>
+            <strong>{depositCommissionRates[selectedLevel - 1]}%</strong>
+          </div>
+        </div>
+        <div className="team-member-filters" role="tablist" aria-label="Member status">
+          {["all", "active", "inactive"].map((status) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={memberFilter === status}
+              className={memberFilter === status ? "active" : ""}
+              onClick={() => setMemberFilter(status)}
+              key={status}
+            >
+              {status[0].toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
+        <p className="team-member-caption">
+          {memberFilter === "all" ? "Everyone" : memberFilter === "active" ? "Active members" : "Inactive members"} on level {selectedLevel} · {visibleMembers.length} shown
+        </p>
+        {visibleMembers.length ? (
+          <div className="team-member-list">
+            {visibleMembers.map((member) => (
+              <article className="team-member-card" key={member.id || `${member.name}-${member.joined}`}>
+                <span className="team-member-avatar">
+                  {member.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase()}
+                </span>
+                <div className="team-member-identity">
+                  <strong>{member.name}</strong>
+                  <small>Level {member.level} · Joined {when(member.joined)}</small>
+                </div>
+                <div className="team-member-deposit">
+                  <small>Total deposit</small>
+                  <strong>{rupees(member.deposits)}</strong>
+                </div>
+                <span className={`team-member-status ${member.active ? "active" : "inactive"}`}>
+                  {member.active ? "Active" : "Inactive"}
+                </span>
+              </article>
+            ))}
           </div>
         ) : (
           <Empty
-            title="Your team starts with you"
-            text="Your first referral will appear here after registration."
+            title={`No ${memberFilter === "all" ? "" : memberFilter + " "}members on level ${selectedLevel}`}
+            text="Members will appear here when they join your referral network."
           />
         )}
       </Card>

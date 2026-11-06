@@ -1758,6 +1758,174 @@ input[type="file"] {
   margin: 14px 0 0;
   font-size: 10px;
 }
+.team-members-panel {
+  margin-top: 22px;
+}
+.team-level-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(115px, 1fr));
+  gap: 9px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.team-level-tabs button {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+}
+.team-level-tabs button strong,
+.team-level-tabs button small {
+  display: block;
+}
+.team-level-tabs button strong {
+  font: 700 13px Manrope, sans-serif;
+}
+.team-level-tabs button small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.team-level-tabs button.active {
+  border-color: #168ba8;
+  background: linear-gradient(135deg, #087f9d, #10abc2);
+  color: #fff;
+}
+.team-level-tabs button.active small {
+  color: #d4f7fb;
+}
+.team-level-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+  padding: 17px;
+  border: 1px solid #d7e9ef;
+  border-radius: 12px;
+  background: #f7fbfd;
+}
+.team-level-summary > div {
+  min-width: 0;
+}
+.team-level-summary > div + div {
+  padding-left: 15px;
+  border-left: 1px solid #dcebf0;
+}
+.team-level-summary small,
+.team-level-summary strong {
+  display: block;
+}
+.team-level-summary small {
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+.team-level-summary strong {
+  margin-top: 6px;
+  color: var(--ink);
+  font: 700 18px Manrope, sans-serif;
+  overflow-wrap: anywhere;
+}
+.team-level-summary > div:last-child strong {
+  color: #168b73;
+}
+.team-member-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f1f6f8;
+}
+.team-member-filters button {
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.team-member-filters button.active {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 2px 8px rgba(26, 74, 91, 0.08);
+}
+.team-member-caption {
+  margin: 13px 2px;
+  font-size: 10px;
+}
+.team-member-list {
+  display: grid;
+  gap: 10px;
+}
+.team-member-card {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) minmax(110px, auto) auto;
+  gap: 13px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.team-member-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #e4f4f8;
+  color: #208aa2;
+  display: grid;
+  place-items: center;
+  font: 800 13px Manrope, sans-serif;
+}
+.team-member-identity,
+.team-member-deposit {
+  min-width: 0;
+}
+.team-member-identity strong,
+.team-member-identity small,
+.team-member-deposit strong,
+.team-member-deposit small {
+  display: block;
+}
+.team-member-identity strong {
+  font-size: 12px;
+}
+.team-member-identity small,
+.team-member-deposit small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 8px;
+}
+.team-member-deposit {
+  text-align: right;
+}
+.team-member-deposit strong {
+  margin-top: 4px;
+  font-size: 11px;
+}
+.team-member-status {
+  min-width: 65px;
+  padding: 7px 9px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+.team-member-status.active {
+  background: #e6f7f0;
+  color: #188260;
+}
+.team-member-status.inactive {
+  background: #fff3de;
+  color: #a66d16;
+}
 .stat-grid.four {
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
@@ -3269,6 +3437,25 @@ td small {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+  .team-member-card {
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    gap: 10px 12px;
+  }
+  .team-member-avatar {
+    grid-row: 1 / 3;
+  }
+  .team-member-identity {
+    grid-column: 2 / 4;
+  }
+  .team-member-deposit {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: left;
+  }
+  .team-member-status {
+    grid-column: 3;
+    grid-row: 2;
+  }
   .plan-card {
     padding: 25px;
   }
@@ -3711,6 +3898,37 @@ td small {
   .invitation-url,
   .support-email {
     max-width: 100%;
+  }
+  .team-members-panel {
+    padding: 16px;
+  }
+  .team-level-tabs {
+    grid-template-columns: repeat(4, 105px);
+    gap: 7px;
+    margin-inline: -2px;
+  }
+  .team-level-tabs button {
+    padding: 10px 11px;
+  }
+  .team-level-summary {
+    gap: 8px;
+    padding: 13px 10px;
+  }
+  .team-level-summary > div + div {
+    padding-left: 8px;
+  }
+  .team-level-summary small {
+    font-size: 7px;
+    letter-spacing: 0.35px;
+  }
+  .team-level-summary strong {
+    font-size: 14px;
+  }
+  .team-member-card {
+    padding: 12px;
+  }
+  .team-member-caption {
+    line-height: 1.5;
   }
   .info-strip,
   .payment-countdown,
