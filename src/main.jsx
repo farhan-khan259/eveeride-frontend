@@ -716,7 +716,7 @@ function LaunchAnnouncement({ user }) {
 
   if (!open) return null;
   return (
-    <Modal title="EveeRide launch" className="launch-modal" close={dismiss}>
+    <Modal title="EveeRide Official" className="launch-modal" close={dismiss}>
       <div className="launch-announcement-hero">
         <span className="launch-announcement-badge">
           <TrendingUp size={15} /> Official launch announcement
@@ -1173,11 +1173,7 @@ function Tasks() {
         eyebrow="TASK CENTER"
         description="One eligible task for each active plan. Rewards are confirmed by the server."
       />
-      <div className="info-strip">
-        <ShieldCheck size={18} />
-        Complete the full task to qualify. The server records your start time
-        and validates completion before posting the reward.
-      </div>
+     
       <ErrorState loading={loading} error={error} />
       <div className="task-grid">
         {data.map((t, i) => (
