@@ -2267,7 +2267,7 @@ function Account() {
                         label="New password"
                         name="newPassword"
                         type="password"
-                        minLength={10}
+                        minLength={8}
                         maxLength={100}
                         autoComplete="new-password"
                         required
@@ -2276,14 +2276,14 @@ function Account() {
                         label="Confirm new password"
                         name="confirmPassword"
                         type="password"
-                        minLength={10}
+                        minLength={8}
                         maxLength={100}
                         autoComplete="new-password"
                         required
                       />
                     </div>
                     <small className="muted">
-                      Use at least 10 characters with uppercase, lowercase and a number.
+                      Use at least 8 characters with uppercase, lowercase and a number.
                     </small>
                     <Submit busy={savingPassword}>Save password</Submit>
                   </form>
@@ -2626,7 +2626,7 @@ function Auth({ register = false, admin = false }) {
             label="Password"
             name="password"
             type="password"
-            minLength={register ? 10 : 1}
+            minLength={register ? 8 : 1}
             maxLength={100}
             autoComplete={register ? "new-password" : "current-password"}
             required
@@ -2634,13 +2634,15 @@ function Auth({ register = false, admin = false }) {
           {register && (
             <>
               <small className="muted">
-                Use at least 10 characters with uppercase, lowercase and a
+                Use at least 8 characters with uppercase, lowercase and a
                 number.
               </small>
               <Field
                 label="Confirm password"
                 name="confirmPassword"
                 type="password"
+                minLength={8}
+                maxLength={100}
                 autoComplete="new-password"
                 required
               />
@@ -2772,7 +2774,7 @@ function Reset() {
                 label="New password"
                 name="password"
                 type="password"
-                minLength={10}
+                minLength={8}
                 maxLength={100}
                 autoComplete="new-password"
                 required
@@ -2781,13 +2783,13 @@ function Reset() {
                 label="Confirm new password"
                 name="confirmPassword"
                 type="password"
-                minLength={10}
+                minLength={8}
                 maxLength={100}
                 autoComplete="new-password"
                 required
               />
               <small className="muted">
-                The OTP expires after 10 minutes. Use at least 10 characters
+                The OTP expires after 10 minutes. Use at least 8 characters
                 with uppercase, lowercase and a number.
               </small>
               <div className="otp-resend-row" aria-live="polite">
