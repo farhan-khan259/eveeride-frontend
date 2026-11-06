@@ -793,12 +793,7 @@ function LaunchAnnouncement({ user }) {
 function Dashboard() {
   const { user } = useApp(),
     { data: d, loading, error } = useData("/dashboard", blank, 10000),
-    [banner, setBanner] = useState(0),
     [balanceVisible, setBalanceVisible] = useState(true);
-  useEffect(() => {
-    const i = setInterval(() => setBanner((x) => (x + 1) % 2), 8000);
-    return () => clearInterval(i);
-  }, []);
   return (
     <>
       <LaunchAnnouncement user={user} />
@@ -905,168 +900,18 @@ function Dashboard() {
         />
       </div>
       <WhatsAppChannel />
-      <section className="banner">
-        <div>
-          <div className="eyebrow">
-            {banner === 0
-              ? "A SMALL STEP. A NEW ROUTINE."
-              : "GROW WITH YOUR COMMUNITY"}
+      <Card>
+        <div className="section-head">
+          <div>
+            <h2>Recent activity</h2>
+            <p>A record of every movement.</p>
           </div>
-          <h2>
-            {banner === 0 ? (
-              <>
-                Make your daily tasks
-                <br />
-                part of something bigger.
-              </>
-            ) : (
-              <>
-                Invite your team.
-                <br />
-                Track every milestone.
-              </>
-            )}
-          </h2>
-          <p>
-            {banner === 0
-              ? "Explore Starter. Complete tasks. Follow your progress."
-              : "Real activity, transparent qualification, shared progress."}
-          </p>
-          <Link className="btn" to={banner === 0 ? "/plans" : "/team"}>
-            {banner === 0 ? "Explore the Starter Plan" : "See your team"}
-            <ArrowRight size={17} />
+          <Link to="/activity" className="text-link">
+            View history <ChevronRight size={16} />
           </Link>
         </div>
-        <div className="banner-art" aria-hidden="true">
-          <div className="art-ring" />
-          <div className="floating-card one">
-            <span>
-              <Check size={18} />
-            </span>
-            <div>
-              YOUR DAILY PROGRESS<b>One task at a time.</b>
-            </div>
-          </div>
-          <div className="floating-card two">
-            <TrendingUp size={26} />
-            <div>
-              BUILT AROUND YOU<b>A clearer path forward.</b>
-            </div>
-          </div>
-          <div className="art-cube">
-            <Layers size={65} strokeWidth={1.2} />
-          </div>
-          <span className="art-dot a" />
-          <span className="art-dot b" />
-        </div>
-        <div className="banner-dots">
-          {[0, 1].map((x) => (
-            <button
-              aria-label={`Banner ${x + 1}`}
-              className={x === banner ? "active" : ""}
-              onClick={() => setBanner(x)}
-              key={x}
-            />
-          ))}
-        </div>
-      </section>
-      <div className="content-grid">
-        <Card>
-          <div className="section-head">
-            <div>
-              <h2>My active plans</h2>
-              <p>Your products, all in one place.</p>
-            </div>
-            <Link to="/products" className="text-link">
-              View all <ChevronRight size={16} />
-            </Link>
-          </div>
-          {d.activePlans.length ? (
-            d.activePlans.map((p) => (
-              <div className="list-row" key={p._id}>
-                <span className="square-icon">
-                  <Layers />
-                </span>
-                <div>
-                  <b>Starter Plan #{p.sequence}</b>
-                  <small>Expires {when(p.expires)}</small>
-                </div>
-                <Tag>Active</Tag>
-              </div>
-            ))
-          ) : (
-            <Empty
-              title="Your journey is ready to begin"
-              text="Activate a plan to unlock your daily tasks."
-              to="/plans"
-              label="Find your first plan"
-            />
-          )}
-        </Card>
-        <Card>
-          <div className="section-head">
-            <div>
-              <h2>Today’s tasks</h2>
-              <p>A little progress, every day.</p>
-            </div>
-            <span className="square-icon small">
-              <Play size={17} />
-            </span>
-          </div>
-          <div className="daily-summary">
-            <span>{d.activePlans.length}</span>
-            <div>
-              <b>eligible daily tasks</b>
-              <small>One task per active plan</small>
-            </div>
-          </div>
-          <div className="task-track">
-            <span style={{ width: "0%" }} />
-          </div>
-          <Link to="/tasks" className="btn secondary full">
-            Open task center
-            <ArrowRight size={17} />
-          </Link>
-          <p className="card-note">
-            <Clock size={14} />
-            Your task status updates after server confirmation.
-          </p>
-        </Card>
-      </div>
-      <div className="content-grid">
-        <Card>
-          <div className="section-head">
-            <div>
-              <h2>Recent activity</h2>
-              <p>A record of every movement.</p>
-            </div>
-            <Link to="/activity" className="text-link">
-              View history <ChevronRight size={16} />
-            </Link>
-          </div>
-          <TransactionList items={d.recent} />
-        </Card>
-        <Card className="invite-card">
-          <div className="invite-icon">
-            <Users size={26} />
-          </div>
-          <Tag>BETTER TOGETHER</Tag>
-          <h2>
-            Your network.
-            <br />
-            Your next milestone.
-          </h2>
-          <p>
-            Invite people to your team and track qualifying activity across four
-            levels.
-          </p>
-          <Link className="text-link" to="/team">
-            Get your invitation link <ArrowRight size={17} />
-          </Link>
-          <div className="invite-lines" />
-        </Card>
-      </div>
-      <UpcomingPlan compact />
+        <TransactionList items={d.recent} />
+      </Card>
     </>
   );
 }
@@ -1173,6 +1018,15 @@ function Plans({ owned = false }) {
               </small>
             </Card>
             <UpcomingPlan />
+            <div className="plan-update-note" lang="ur" dir="rtl">
+              <span className="plan-update-note-icon">
+                <Plus size={19} />
+              </span>
+              <div>
+                <small>نئے پلان کی تازہ کاری</small>
+                <strong>ہر 10 دن بعد ایک نیا پلان شامل کیا جائے گا۔</strong>
+              </div>
+            </div>
           </div>
           <div>
             <Card>
