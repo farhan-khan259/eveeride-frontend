@@ -3535,7 +3535,15 @@ td small {
   }
   .page-title h1 {
     font-size: 23px;
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
+    text-wrap: balance;
+  }
+  .page-title p {
+    max-width: 100%;
+    overflow-wrap: normal;
+    word-break: normal;
+    text-wrap: pretty;
   }
   .setup-note,
   .impersonation-banner {
@@ -3973,9 +3981,6 @@ td small {
   .promo-card,
   .legal {
     padding: 16px;
-  }
-  .page-title h1 {
-    font-size: 22px;
   }
   .balance-card {
     padding-inline: 18px;

@@ -1983,7 +1983,7 @@ function Activity({ admin = false }) {
   return (
     <>
       <PageTitle
-        title="Every movement, accounted for."
+        title={<>Every movement, accounted&nbsp;for.</>}
         eyebrow="TRANSACTIONS"
         description="Your immutable transaction ledger, all in one place."
       />
