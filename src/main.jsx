@@ -1058,14 +1058,22 @@ function Dashboard() {
 }
 function Plans({ owned = false }) {
   const { data, loading, error } = useData("/plans", {
+      plan: {
+        price: 51000,
+        reward: 3400,
+        dailyTasks: 1,
+        days: 35,
+        maxPurchases: 3,
+      },
       purchases: [],
       subscribers: 0,
     }),
-    { pub, action, user } = useApp();
-  const plan = pub?.plan || {
+    { pub, action } = useApp();
+  const plan = data.plan || pub?.plan || {
     price: 51000,
-    reward: 4250,
-    days: 28,
+    reward: 3400,
+    dailyTasks: 1,
+    days: 35,
     maxPurchases: 3,
   };
   const [confirm, setConfirm] = useState(false),
@@ -1113,16 +1121,17 @@ function Plans({ owned = false }) {
             <h2>EveeRide</h2>
             <p>Start with one daily task.</p>
             <div className="plan-price">
-              Rs 510<span>/ 28 days</span>
+              {(plan.price / 100).toLocaleString("en-PK")} PKR
+              <span>/ {plan.days} days</span>
             </div>
             <div className="plan-details">
               {[
-                ["Daily tasks", "1 per plan"],
+                ["Daily tasks", `${plan.dailyTasks} per day`],
                 ["Reward per completed task", rupees(plan.reward)],
-                ["Plan duration", "28 days"],
-                ["Total eligible tasks", "28"],
-                ["Total possible task rewards", "Rs 1,190.00"],
-                ["Maximum purchases", "3 per account"],
+                ["Plan duration", `${plan.days} days`],
+                ["Total eligible tasks", String(plan.dailyTasks * plan.days)],
+                ["Total possible task rewards", rupees(plan.reward * plan.dailyTasks * plan.days)],
+                ["Maximum purchases", `${plan.maxPurchases} per account`],
               ].map(([a, b]) => (
                 <div key={a}>
                   <span>{a}</span>
@@ -1132,13 +1141,13 @@ function Plans({ owned = false }) {
             </div>
             <div className="purchase-meter">
               <span>Your purchase count</span>
-              <b>{data.purchases.length} / 3</b>
+              <b>{data.purchases.length}/{plan.maxPurchases} purchases</b>
             </div>
             <Button
-              disabled={data.purchases.length >= 3}
+              disabled={data.purchases.length >= plan.maxPurchases}
               onClick={() => setConfirm(true)}
             >
-              {data.purchases.length >= 3
+              {data.purchases.length >= plan.maxPurchases
                 ? "Purchase limit reached"
                 : "Activate Starter Plan"}
               <ArrowRight size={17} />
@@ -1159,7 +1168,7 @@ function Plans({ owned = false }) {
               <ul className="clean-list">
                 <li>
                   <Check size={17} />
-                  Each purchase has a separate 28-day schedule.
+                  Each purchase has a separate {plan.days}-day schedule.
                 </li>
                 <li>
                   <Check size={17} />
@@ -1194,8 +1203,9 @@ function Plans({ owned = false }) {
       {confirm && (
         <Modal title="Activate Starter Plan?" close={() => setConfirm(false)}>
           <p>
-            Rs 510 will be deducted from your available balance. The plan lasts
-            28 days and includes one eligible daily task.
+            {rupees(plan.price)} will be deducted from your available balance.{" "}
+            The plan lasts {plan.days} days and includes {plan.dailyTasks} eligible
+            daily {plan.dailyTasks === 1 ? "task" : "tasks"}.
           </p>
           <Button
             disabled={buying}
@@ -1718,7 +1728,9 @@ function Team() {
       members: [],
       levels: [0, 0, 0, 0],
     }),
-    { user, tell } = useApp();
+    { user, pub, tell } = useApp(),
+    depositCommissionRates = pub?.commissions?.deposit || [7, 3, 2, 2],
+    teamEarningRate = pub?.commissions?.teamEarning?.[0] || 4;
   return (
     <>
       <PageTitle
@@ -1755,6 +1767,43 @@ function Team() {
           <Copy size={17} />
           Copy invitation link
         </Button>
+      </div>
+      <div className="commission-policy-grid">
+        <Card className="commission-policy-card">
+          <div className="commission-policy-head">
+            <span className="square-icon"><ArrowDownLeft size={19} /></span>
+            <div>
+              <span className="eyebrow">DEPOSIT COMMISSION</span>
+              <h2>Earn across four team levels</h2>
+            </div>
+          </div>
+          <div className="commission-rate-list">
+            {depositCommissionRates.map((rate, index) => (
+              <div key={index}>
+                <span>Level {index + 1}</span>
+                <strong>{rate}%</strong>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card className="commission-policy-card">
+          <div className="commission-policy-head">
+            <span className="square-icon"><UsersRound size={19} /></span>
+            <div>
+              <span className="eyebrow">TEAM EARNING COMMISSION</span>
+              <h2>Direct team earnings</h2>
+            </div>
+          </div>
+          <div className="commission-rate-list single">
+            <div>
+              <span>Level 1</span>
+              <strong>{teamEarningRate}%</strong>
+            </div>
+          </div>
+          <p className="commission-policy-note">
+            Applies to eligible earnings from your direct team.
+          </p>
+        </Card>
       </div>
       <div className="stat-grid four">
         {[
@@ -2453,17 +2502,19 @@ function Legal({ privacy = false }) {
             </p>
             <h2>Plans and task rewards</h2>
             <p>
-              The Starter Plan costs Rs 510, lasts 28 days, and offers one
+              The Starter Plan costs Rs 510, lasts 35 days, and offers one
               eligible task per day per plan with a maximum of three purchases.
-              A completed eligible task has a configured reward of Rs 42.50.
+              A completed eligible task has a configured reward of Rs 34.00.
               Completed tasks are validated by the server before rewards are
               added to the account.
             </p>
             <h2>Referral and bonus rules</h2>
             <p>
-              Four referral levels are tracked. Eligible team activity updates
-              milestone progress. Ten team-performance bonuses are one-time
-              rewards, with a ten-day waiting period after qualification.
+              Four referral levels are tracked. Eligible approved deposits pay
+              7%, 3%, 2%, and 2% across levels one through four. Eligible direct
+              team earnings pay 4% at level one. Team activity also updates
+              milestone progress. Ten team-performance bonuses use repeatable
+              ten-day cycles.
             </p>
             <h2>Deposits and withdrawals</h2>
             <p>

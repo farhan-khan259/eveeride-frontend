@@ -1573,6 +1573,65 @@ input[type="file"] {
 .team-invite > .btn {
   margin-left: auto;
 }
+.commission-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.commission-policy-card {
+  margin: 0;
+}
+.commission-policy-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 18px;
+}
+.commission-policy-head > div {
+  min-width: 0;
+}
+.commission-policy-head .eyebrow {
+  display: block;
+  margin-bottom: 5px;
+}
+.commission-policy-head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.commission-rate-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.commission-rate-list.single {
+  grid-template-columns: minmax(110px, 0.45fr);
+}
+.commission-rate-list > div {
+  min-width: 0;
+  padding: 12px 10px;
+  border: 1px solid #d8eaf0;
+  border-radius: 10px;
+  background: #f5fbfd;
+  text-align: center;
+}
+.commission-rate-list span,
+.commission-rate-list strong {
+  display: block;
+}
+.commission-rate-list span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.commission-rate-list strong {
+  margin-top: 5px;
+  color: #168ba8;
+  font: 800 19px Manrope, sans-serif;
+}
+.commission-policy-note {
+  margin: 14px 0 0;
+  font-size: 10px;
+}
 .stat-grid.four {
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
@@ -3049,6 +3108,10 @@ td small {
   }
   .team-invite > .btn {
     margin: 5px 0 0;
+  }
+  .commission-policy-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   .plan-card {
     padding: 25px;
