@@ -536,6 +536,57 @@ function Button({
     </button>
   );
 }
+function SignOutButton({ children = "Sign out", iconSize = 16 }) {
+  const { logout } = useApp();
+  const [confirming, setConfirming] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function confirmSignOut() {
+    setSigningOut(true);
+    await logout();
+    setSigningOut(false);
+    setConfirming(false);
+  }
+
+  return (
+    <>
+      <Button secondary onClick={() => setConfirming(true)}>
+        <LogOut size={iconSize} />
+        {children}
+      </Button>
+      {confirming && (
+        <Modal
+          title="Sign out?"
+          className="signout-modal"
+          close={() => !signingOut && setConfirming(false)}
+        >
+          <div className="signout-confirmation">
+            <span className="signout-confirmation-icon">
+              <LogOut size={22} />
+            </span>
+            <div>
+              <h3>Are you sure you want to sign out?</h3>
+              <p>You’ll need to sign in again to access your EveeRide account.</p>
+            </div>
+          </div>
+          <div className="signout-confirmation-actions">
+            <Button
+              secondary
+              disabled={signingOut}
+              onClick={() => setConfirming(false)}
+            >
+              Cancel
+            </Button>
+            <Button disabled={signingOut} onClick={confirmSignOut}>
+              {signingOut ? <LoaderCircle size={16} className="spin" /> : <LogOut size={16} />}
+              {signingOut ? "Signing out…" : "Sign out"}
+            </Button>
+          </div>
+        </Modal>
+      )}
+    </>
+  );
+}
 function Empty({
   title = "Nothing here yet",
   text = "Your records will appear here as you get started.",
@@ -1093,11 +1144,11 @@ function Plans({ owned = false }) {
     </>
   );
 }
-function Modal({ title, close, children }) {
+function Modal({ title, close, children, className = "" }) {
   return (
     <div className="modal-backdrop" onClick={close}>
       <section
-        className="modal card"
+        className={`modal card ${className}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -2021,7 +2072,7 @@ function Activity({ admin = false }) {
   );
 }
 function Account() {
-  const { user, logout, action, login, impersonating, updateUser } = useApp(),
+  const { user, action, login, impersonating, updateUser } = useApp(),
     [editingPassword, setEditingPassword] = useState(false),
     [savingPassword, setSavingPassword] = useState(false),
     [savingAvatar, setSavingAvatar] = useState(false);
@@ -2153,10 +2204,7 @@ function Account() {
               </section>
             )}
             <div className="button-row">
-              <Button secondary onClick={logout}>
-                <LogOut size={16} />
-                Sign out
-              </Button>
+              <SignOutButton />
               {user.role === "admin" && (
                 <Link className="btn" to="/admin">
                   Open admin
@@ -2608,7 +2656,7 @@ const adminNav = [
   ["transactions", "Transactions", Receipt],
 ];
 function Admin() {
-  const { user, ready, logout } = useApp(),
+  const { user, ready } = useApp(),
     [menu, setMenu] = useState(false),
     location = useLocation();
   useEffect(() => setMenu(false), [location.pathname]);
@@ -2634,10 +2682,7 @@ function Admin() {
             <span>{user.name}</span>
             <small>Administrator</small>
           </div>
-          <Button secondary onClick={logout}>
-            <LogOut size={17} />
-            Logout
-          </Button>
+          <SignOutButton iconSize={17}>Logout</SignOutButton>
         </div>
       </header>
       <div className="admin-layout">

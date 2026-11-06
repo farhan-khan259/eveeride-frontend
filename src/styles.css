@@ -2094,6 +2094,43 @@ td small {
 .modal p {
   font-size: 12px;
 }
+.signout-modal {
+  max-width: 440px;
+}
+.signout-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 6px 0 20px;
+}
+.signout-confirmation-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 12px;
+  background: #eaf6fb;
+  color: #268ca7;
+  display: grid;
+  place-items: center;
+}
+.signout-confirmation h3 {
+  margin: 1px 0 6px;
+  font-size: 15px;
+}
+.signout-confirmation p {
+  margin: 0;
+  line-height: 1.6;
+}
+.signout-confirmation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 17px;
+  border-top: 1px solid var(--line);
+}
+.signout-confirmation-actions .btn {
+  min-width: 105px;
+}
 .proof-image {
   max-width: 100%;
   max-height: 450px;
