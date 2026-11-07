@@ -625,7 +625,7 @@ function MoneyStat({ icon: Icon, label, value, description }) {
 }
 const WHATSAPP_CHANNEL =
     "https://whatsapp.com/channel/0029VbEJyKw2975BrU2C0a3E",
-  WHATSAPP_SUPPORT = "https://wa.me/92333456789",
+  WHATSAPP_SUPPORT = "https://wa.me/923379809499",
   SUPPORT_EMAIL = "eveerideofficial@gmail.com";
 const UPCOMING_PLAN_UNLOCK_AT = Date.parse("2026-11-10T23:59:59+05:00");
 function WhatsAppChannel({ promo = false }) {
@@ -1004,10 +1004,6 @@ function Plans({ owned = false }) {
                   : "Activate Starter Plan"}
                 <ArrowRight size={17} />
               </Button>
-              <small className="center muted">
-                {data.subscribers} verified plan purchaser
-                {data.subscribers !== 1 ? "s" : ""}
-              </small>
             </Card>
             <UpcomingPlan />
             <div className="plan-update-note" lang="ur" dir="rtl">
@@ -1366,6 +1362,7 @@ function Deposit() {
                   min="510"
                   step="0.01"
                   required
+                  placeholder="Enter amount"
                 />
                 <Field label="Payment method">
                   <select name="method" required>
