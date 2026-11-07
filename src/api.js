@@ -10,6 +10,7 @@ export { rupees, when } from "./format.js";
 export const blank = {
   user: { name: "Your workspace", wallet: {}, purchases: 0 },
   available: 0,
+  depositBalance: 0,
   withdrawable: 0,
   pending: 0,
   totals: {},

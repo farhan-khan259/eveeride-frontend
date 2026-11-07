@@ -826,7 +826,9 @@ function Dashboard() {
             <div className="deposit-balance">
               <span>Deposit balance</span>
               <b className={balanceVisible ? "" : "concealed"}>
-                {balanceVisible ? rupees(d.user?.wallet?.deposit || 0) : "••••••"}
+                {balanceVisible
+                  ? rupees(d.depositBalance ?? d.user?.wallet?.deposit)
+                  : "••••••"}
               </b>
             </div>
           </div>
