@@ -402,9 +402,6 @@ function Shell() {
                 {unreadNotifications > 99 ? "99+" : unreadNotifications}
               </span>
             </Link>
-            <Link to={user ? "/account" : "/login"} className="avatar-link">
-              <ProfileAvatar user={user} />
-            </Link>
           </div>
         </header>
         <main>
@@ -1360,7 +1357,6 @@ function Deposit() {
                   min="510"
                   step="0.01"
                   required
-                  placeholder="510.00"
                 />
                 <Field label="Payment method">
                   <select name="method" required>
@@ -1437,12 +1433,14 @@ function Deposit() {
                   accept="image/png,image/jpeg,image/webp"
                   required
                 />
-                <Submit busy={busy} disabled={seconds === 0}>
-                  Confirm deposit
-                </Submit>
-                <Button secondary onClick={() => setOrder(null)}>
-                  Back
-                </Button>
+                <div className="deposit-actions">
+                  <Submit busy={busy} disabled={seconds === 0}>
+                    Confirm deposit
+                  </Submit>
+                  <Button secondary onClick={() => setOrder(null)}>
+                    Back
+                  </Button>
+                </div>
               </>
             )}
           </form>

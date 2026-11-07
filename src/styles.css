@@ -1514,6 +1514,11 @@ video {
   gap: 26px;
   max-width: 1050px;
 }
+.deposit-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .field {
   display: flex;
   flex-direction: column;
