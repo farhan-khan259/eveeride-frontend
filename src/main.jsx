@@ -56,6 +56,14 @@ import {
   Download,
   Upload,
   ExternalLink,
+  Award,
+  BadgeCheck,
+  Gem,
+  Medal,
+  Ribbon,
+  Star,
+  Target,
+  Trophy,
 } from "lucide-react";
 import { api, rupees, when, blank } from "./api.js";
 import "./styles.css";
@@ -1801,6 +1809,18 @@ function countdown(date, now) {
   const seconds = Math.max(0, Math.floor((Date.parse(date) - now) / 1000));
   return `${Math.floor(seconds / 86400)}d ${Math.floor(seconds / 3600) % 24}h ${Math.floor(seconds / 60) % 60}m ${seconds % 60}s`;
 }
+const salaryLevelIcons = [
+  Medal,
+  BadgeCheck,
+  Crown,
+  Trophy,
+  Ribbon,
+  Award,
+  Gem,
+  Star,
+  Target,
+  ShieldCheck,
+];
 function Salary() {
   const fallback = {
       total: 0,
@@ -1855,12 +1875,13 @@ function Salary() {
       <div className="salary-grid">
         {data.levels.map((l) => {
           const s = data.states.find((s) => s.level === l.level),
+            LevelIcon = salaryLevelIcons[(l.level - 1) % salaryLevelIcons.length],
             progress = Math.min(100, (data.total / l.target) * 100);
           return (
             <Card className="salary-card" key={l.level}>
               <div className="section-head">
                 <span className="crown-icon">
-                  <Crown size={27} />
+                  <LevelIcon size={27} />
                 </span>
                 <Tag>LEVEL {String(l.level).padStart(2, "0")}</Tag>
               </div>
