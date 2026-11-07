@@ -1978,7 +1978,10 @@ function Promo() {
   );
 }
 function TransactionList({ items = [] }) {
-  if (!items.length)
+  const visibleItems = items.filter(
+    (transaction) => transaction.category !== "registration_backing",
+  );
+  if (!visibleItems.length)
     return (
       <Empty
         title="A fresh start"
@@ -1987,7 +1990,7 @@ function TransactionList({ items = [] }) {
     );
   return (
     <div className="transaction-list">
-      {items.map((t) => (
+      {visibleItems.map((t) => (
         <div className="list-row" key={t._id}>
           <span className={"transaction-icon " + (t.amount < 0 ? "out" : "")}>
             <>
@@ -2003,7 +2006,6 @@ function TransactionList({ items = [] }) {
             <small>
               {when(t.createdAt)} · {t.category.replaceAll("_", " ")}
             </small>
-            <small className="mono">{t._id}</small>
           </div>
           <div className="transaction-amount">
             <b className={t.amount < 0 ? "negative" : "positive"}>
