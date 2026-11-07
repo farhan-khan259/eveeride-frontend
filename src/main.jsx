@@ -66,6 +66,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { api, rupees, when, blank } from "./api.js";
+import { adminRupees } from "./format.js";
 import "./styles.css";
 const Context = createContext();
 const useApp = () => useContext(Context);
@@ -2907,17 +2908,60 @@ function AdminDashboard() {
         description="Monitor accounts, requests, rewards and platform activity."
       />
       <ErrorState error={error} />
+      <section className="admin-dashboard-section">
+        <div className="section-head">
+          <div>
+            <span className="eyebrow">TODAY · PAKISTAN TIME</span>
+            <h2>Today’s activity</h2>
+          </div>
+        </div>
+        <div className="stat-grid four">
+          {[
+            ["Today deposit", adminRupees(d.today?.deposit)],
+            ["Today withdraw", adminRupees(d.today?.withdraw)],
+            ["Today investment", adminRupees(d.today?.investment)],
+            ["Today user joined", d.today?.joined ?? 0],
+          ].map(([n, v]) => (
+            <Card className="compact-stat" key={n}>
+              <span>{n}</span>
+              <strong>{v}</strong>
+            </Card>
+          ))}
+        </div>
+      </section>
+      <section className="admin-dashboard-section">
+        <div className="section-head">
+          <div>
+            <span className="eyebrow">ALL-TIME TOTALS</span>
+            <h2>Platform finances</h2>
+          </div>
+        </div>
+        <div className="stat-grid five">
+          {[
+            ["Total deposit", adminRupees(d.totals?.deposit)],
+            ["Total withdraw", adminRupees(d.totals?.withdraw)],
+            ["Total earnings paid", adminRupees(d.totals?.earningsPaid)],
+            ["Total platform profit", adminRupees(d.totals?.platformProfit)],
+            ["Platform balance", adminRupees(d.totals?.platformBalance)],
+          ].map(([n, v]) => (
+            <Card className="compact-stat" key={n}>
+              <span>{n}</span>
+              <strong>{v}</strong>
+            </Card>
+          ))}
+        </div>
+      </section>
       <div className="stat-grid four">
         {[
           ["Registered users", d.users, "/admin/users"],
           ["Active accounts", d.activeUsers],
           ["Active paid plans", d.activePlans],
           ["Pending deposits", d.pendingDeposits, "/admin/deposits"],
-          ["Approved deposits", rupees(d.approvedDeposits), "/admin/deposits"],
+          ["Approved deposits", adminRupees(d.approvedDeposits), "/admin/deposits"],
           ["Pending withdrawals", d.pendingWithdrawals, "/admin/withdrawals"],
-          ["Approved withdrawals", rupees(d.approvedWithdrawals), "/admin/withdrawals"],
-          ["Task rewards", rupees(d.taskRewards)],
-          ["Commissions", rupees(d.commissions)],
+          ["Approved withdrawals", adminRupees(d.approvedWithdrawals), "/admin/withdrawals"],
+          ["Task rewards", adminRupees(d.taskRewards)],
+          ["Commissions", adminRupees(d.commissions)],
         ].map(([n, v, to]) => {
           const content = (
             <Card className={`compact-stat${to ? " clickable-stat" : ""}`}>

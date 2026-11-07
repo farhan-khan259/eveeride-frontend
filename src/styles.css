@@ -3055,6 +3055,16 @@ td small {
 .admin-main .stat-grid {
   margin-bottom: 25px;
 }
+.admin-dashboard-section {
+  margin-bottom: 22px;
+}
+.admin-dashboard-section .section-head {
+  margin-bottom: 12px;
+}
+.stat-grid.five {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
 .request-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -3199,6 +3209,9 @@ td small {
   }
   .stat-grid.four {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-grid.five {
+    grid-template-columns: repeat(3, 1fr);
   }
   .auth-story {
     padding: 40px;
@@ -4689,6 +4702,19 @@ td small {
   }
   .admin-main .compact-stat strong {
     font-size: 19px;
+  }
+  .admin-main .stat-link .compact-stat {
+    padding-right: 42px;
+  }
+  .admin-main .stat-link .compact-stat span {
+    line-height: 1.35;
+  }
+  .admin-main .stat-link .stat-arrow {
+    top: 14px;
+    right: 12px;
+  }
+  .admin-main .stat-grid.five {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .admin-main .chart-canvas svg {
     height: 145px;
