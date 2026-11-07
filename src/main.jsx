@@ -824,9 +824,14 @@ function Dashboard() {
           </div>
           <div className="balance-breakdown">
             <div>
-              <span>Withdrawable balance</span>
+              <span>Total earnings</span>
               <b className={balanceVisible ? "" : "concealed"}>
-                {balanceVisible ? rupees(d.withdrawable) : "••••••"}
+                {balanceVisible
+                  ? rupees(
+                      d.totalEarnings ??
+                        (d.available ?? 0) - (d.depositBalance ?? 0),
+                    )
+                  : "••••••"}
               </b>
             </div>
             <div className="deposit-balance">
