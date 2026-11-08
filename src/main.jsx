@@ -1309,6 +1309,11 @@ function Tasks() {
 function Field({ label, children, ...props }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const isPassword = !children && props.type === "password";
+  const placeholder =
+    props.placeholder ??
+    (props.type === "file"
+      ? undefined
+      : `Enter ${label.replace(/\s*\(optional\)\s*$/, "").toLowerCase()}`);
   return (
     <label className="field">
       <span>{label}</span>
@@ -1316,6 +1321,7 @@ function Field({ label, children, ...props }) {
         <span className="password-input-wrap">
           <input
             {...props}
+            placeholder={placeholder}
             type={passwordVisible ? "text" : "password"}
           />
           <button
@@ -1328,7 +1334,7 @@ function Field({ label, children, ...props }) {
             {passwordVisible ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
         </span>
-      ) : <input {...props} />)}
+      ) : <input {...props} placeholder={placeholder} />)}
     </label>
   );
 }
@@ -1505,6 +1511,7 @@ function Deposit() {
                   name="tid"
                   minLength={6}
                   maxLength={80}
+                  placeholder="Enter transaction ID"
                   required
                 />
                 <Field
@@ -1579,7 +1586,12 @@ function Withdraw() {
           {!a || edit ? (
             <form onSubmit={save}>
               <h2>Bind your payout account</h2>
-              <Field label="Account holder name" name="holder" required />
+              <Field
+                label="Account holder name"
+                name="holder"
+                placeholder="Enter account holder name"
+                required
+              />
               <Field label="Wallet type">
                 <select
                   name="type"
@@ -1595,16 +1607,23 @@ function Withdraw() {
                 label="Account number / IBAN"
                 name="number"
                 minLength={10}
+                placeholder="Enter account number or IBAN"
                 required
               />
               {type === "Bank Account" && (
-                <Field label="Bank name" name="bank" required />
+                <Field
+                  label="Bank name"
+                  name="bank"
+                  placeholder="Enter bank name"
+                  required
+                />
               )}
               <Field
                 label="Confirm with your password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
+                placeholder="Enter your password"
                 required
               />
               <Submit>Save payout account</Submit>
@@ -1643,7 +1662,7 @@ function Withdraw() {
                   min="100"
                   step="0.01"
                   required
-                  placeholder="100.00"
+                  placeholder="Enter withdrawal amount"
                 />
                 <Submit disabled={open === false}>
                   Submit withdrawal request
@@ -2340,6 +2359,7 @@ function Account() {
                       name="currentPassword"
                       type="password"
                       autoComplete="current-password"
+                      placeholder="Enter your current password"
                       required
                     />
                     <div className="password-form-grid">
@@ -2350,6 +2370,7 @@ function Account() {
                         minLength={8}
                         maxLength={100}
                         autoComplete="new-password"
+                        placeholder="Enter a new password"
                         required
                       />
                       <Field
@@ -2359,6 +2380,7 @@ function Account() {
                         minLength={8}
                         maxLength={100}
                         autoComplete="new-password"
+                        placeholder="Confirm your new password"
                         required
                       />
                     </div>
@@ -2684,13 +2706,7 @@ function Auth({ register = false, admin = false }) {
                 autoComplete="name"
                 minLength={2}
                 maxLength={80}
-                required
-              />
-              <Field
-                label="Username"
-                name="username"
-                autoComplete="username"
-                pattern="[A-Za-z0-9_]{3,30}"
+                placeholder="Enter your full name"
                 required
               />
             </>
@@ -2700,6 +2716,7 @@ function Auth({ register = false, admin = false }) {
             name="email"
             type="email"
             autoComplete="email"
+            placeholder="Enter your email address"
             required
           />
           <Field
@@ -2709,6 +2726,7 @@ function Auth({ register = false, admin = false }) {
             minLength={register ? 8 : 1}
             maxLength={100}
             autoComplete={register ? "new-password" : "current-password"}
+            placeholder="Enter your password"
             required
           />
           {register && (
@@ -2724,12 +2742,14 @@ function Auth({ register = false, admin = false }) {
                 minLength={8}
                 maxLength={100}
                 autoComplete="new-password"
+                placeholder="Confirm your password"
                 required
               />
               <Field
                 label="Referral code (optional)"
                 name="referralCode"
                 defaultValue={ref}
+                placeholder="Enter referral code"
               />
               <label className="checkbox">
                 <input type="checkbox" name="terms" required />I agree to the{" "}
@@ -2836,6 +2856,7 @@ function Reset() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               autoComplete="email"
+              placeholder="Enter your registered email"
               required
             />
           ) : (
@@ -2857,6 +2878,7 @@ function Reset() {
                 minLength={8}
                 maxLength={100}
                 autoComplete="new-password"
+                placeholder="Enter a new password"
                 required
               />
               <Field
@@ -2866,6 +2888,7 @@ function Reset() {
                 minLength={8}
                 maxLength={100}
                 autoComplete="new-password"
+                placeholder="Confirm your new password"
                 required
               />
               <small className="muted">
@@ -3240,6 +3263,11 @@ function ApiForm({
               type={type}
               step={type === "number" ? "0.01" : undefined}
               accept={type === "file" ? "video/mp4" : undefined}
+              placeholder={
+                type === "file"
+                  ? undefined
+                  : `Enter ${l.replace(/\s*\(optional\)\s*$/, "").toLowerCase()}`
+              }
             />
           )}
         </Field>
@@ -3798,16 +3826,19 @@ function AdminPayments() {
                 label="Account title"
                 name={m + "title"}
                 defaultValue={data[m]?.title}
+                placeholder="Enter account title"
               />
               <Field
                 label="Account number / IBAN"
                 name={m + "number"}
                 defaultValue={data[m]?.number}
+                placeholder="Enter account number or IBAN"
               />
               <Field
                 label="Bank name"
                 name={m + "bank"}
                 defaultValue={data[m]?.bank}
+                placeholder="Enter bank name"
               />
               <label className="checkbox">
                 <input
