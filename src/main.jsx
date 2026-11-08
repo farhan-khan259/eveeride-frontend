@@ -920,7 +920,16 @@ function Plans({ owned = false }) {
         days: 35,
         maxPurchases: 3,
       },
+      freePlan: {
+        name: "EveeRide FREE PLAN",
+        price: 0,
+        reward: 500,
+        dailyTasks: 1,
+        days: 10,
+        maxPurchases: 1,
+      },
       purchases: [],
+      freePurchase: null,
       subscribers: 0,
     }),
     { pub, action } = useApp();
@@ -931,8 +940,10 @@ function Plans({ owned = false }) {
     days: 35,
     maxPurchases: 3,
   };
+  const freePlan = data.freePlan;
   const [confirm, setConfirm] = useState(false),
-    [buying, setBuying] = useState(false);
+    [buying, setBuying] = useState(false),
+    [activatingFree, setActivatingFree] = useState(false);
   return (
     <>
       <PageTitle
@@ -967,6 +978,56 @@ function Plans({ owned = false }) {
       ) : (
         <div className="plan-layout">
           <div className="plan-primary-column">
+            {freePlan && (
+              <Card className="plan-card free-plan-card">
+                <div className="plan-hero-image">
+                  <img
+                    src="/images/WhatsApp%20Image%202026-11-08%20at%2015.36.43.jpeg"
+                    alt="EveeRide free plan registration bonus"
+                  />
+                </div>
+                <div className="plan-header">
+                  <span className="square-icon">
+                    <Gift size={27} />
+                  </span>
+                  <Tag>FREE PLAN</Tag>
+                </div>
+                <h2>{freePlan.name}</h2>
+                <p>Activate free and start your daily task journey.</p>
+                <div className="plan-price free-plan-price">
+                  FREE
+                  <span>/ {freePlan.days} days</span>
+                </div>
+                <div className="plan-details">
+                  {[
+                    ["Reward per completed task", "Rs 5–50"],
+                    ["Daily tasks", `${freePlan.dailyTasks} per day`],
+                    ["Plan duration", `${freePlan.days} days`],
+                    ["Maximum purchases", "1 per account"],
+                  ].map(([a, b]) => (
+                    <div key={a}>
+                      <span>{a}</span>
+                      <b>{b}</b>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  disabled={!!data.freePurchase || activatingFree}
+                  onClick={async () => {
+                    setActivatingFree(true);
+                    await action(() =>
+                      api.post("/plans/free/activate", {
+                        requestId: crypto.randomUUID(),
+                      }),
+                    );
+                    setActivatingFree(false);
+                  }}
+                >
+                  {data.freePurchase ? "Free plan activated" : "Activate free plan"}
+                  <ArrowRight size={17} />
+                </Button>
+              </Card>
+            )}
             <Card className="plan-card">
               <div className="plan-hero-image">
                 <img

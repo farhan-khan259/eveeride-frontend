@@ -1384,6 +1384,20 @@ footer {
   width: 100%;
   margin-bottom: 15px;
 }
+.free-plan-card {
+  margin-bottom: 18px;
+  border-color: #bde8d1;
+  background: linear-gradient(180deg, #fbfffc 0%, #fff 52%);
+}
+.free-plan-card + .plan-card {
+  margin-top: 30px;
+}
+.free-plan-card .plan-hero-image {
+  aspect-ratio: 16 / 9;
+}
+.free-plan-price {
+  color: #168e5d;
+}
 .center {
   text-align: center;
   display: block;
@@ -3526,6 +3540,9 @@ td small {
     width: calc(100% + 44px);
     margin: -22px -22px 22px;
     border-radius: 15px 15px 0 0;
+  }
+  .free-plan-card + .plan-card {
+    margin-top: 22px;
   }
   .plan-header,
   .plan-details > div,
