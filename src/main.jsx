@@ -1933,7 +1933,8 @@ function Salary() {
   );
 }
 function Promo() {
-  const { action } = useApp();
+  const { action } = useApp(),
+    { data: claims, error, loading } = useData("/promos/claims", []);
   return (
     <>
       <PageTitle
@@ -1975,6 +1976,39 @@ function Promo() {
         <small className="muted">
           Each account can claim an eligible promo code once while claims remain.
         </small>
+      </Card>
+      <Card>
+        <div className="section-head">
+          <div>
+            <h2>Claim history</h2>
+            <p className="muted">Your claimed promo codes and rewards.</p>
+          </div>
+        </div>
+        <ErrorState loading={loading} error={error} />
+        {!loading && !claims.length ? (
+          <Empty
+            title="No promo claims yet"
+            text="Claimed promo rewards will appear here."
+          />
+        ) : (
+          <div className="transaction-list">
+            {claims.map((claim) => (
+              <div className="list-row" key={claim._id}>
+                <span className="transaction-icon">
+                  <Gift size={19} />
+                </span>
+                <div>
+                  <b>{claim.promo?.code || "Promo code"}</b>
+                  <small>{when(claim.createdAt)}</small>
+                </div>
+                <div className="transaction-amount">
+                  <b className="positive">+{rupees(claim.amount)}</b>
+                  <small>claimed</small>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </Card>
     </>
   );
