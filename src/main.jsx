@@ -941,6 +941,9 @@ function Plans({ owned = false }) {
     maxPurchases: 3,
   };
   const freePlan = data.freePlan;
+  const paidPurchases = data.purchases.filter(
+    (purchase) => purchase.planType !== "free",
+  );
   const [confirm, setConfirm] = useState(false),
     [buying, setBuying] = useState(false),
     [activatingFree, setActivatingFree] = useState(false);
@@ -1064,13 +1067,13 @@ function Plans({ owned = false }) {
               </div>
               <div className="purchase-meter">
                 <span>Your purchase count</span>
-                <b>{data.purchases.length}/{plan.maxPurchases} purchases</b>
+                <b>{paidPurchases.length}/{plan.maxPurchases} purchases</b>
               </div>
               <Button
-                disabled={data.purchases.length >= plan.maxPurchases}
+                disabled={paidPurchases.length >= plan.maxPurchases}
                 onClick={() => setConfirm(true)}
               >
-                {data.purchases.length >= plan.maxPurchases
+                {paidPurchases.length >= plan.maxPurchases
                   ? "Purchase limit reached"
                   : "Activate Starter Plan"}
                 <ArrowRight size={17} />
@@ -1182,9 +1185,14 @@ function Modal({ title, close, children, className = "" }) {
 }
 function Tasks() {
   const { data, loading, error } = useData("/tasks", []),
+    { data: history } = useData("/tasks/history", []),
+    { data: taskTransactions } = useData("/transactions?category=task_earning", {
+      items: [],
+    }),
     { action, tell } = useApp(),
     [started, setStarted] = useState({}),
-    [urls, setUrls] = useState({});
+    [urls, setUrls] = useState({}),
+    [reward, setReward] = useState(null);
   useEffect(
     () => () => Object.values(urls).forEach(URL.revokeObjectURL),
     [urls],
@@ -1241,67 +1249,210 @@ function Tasks() {
       }
     }
   }
+  const completedTasks = (history.length ? history : data).filter(
+      (task) => task.completed,
+    ),
+    earnings = taskTransactions.items || [],
+    today = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Karachi",
+    }).format(new Date()),
+    completedToday = completedTasks.filter(
+      (task) =>
+        new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Karachi",
+        }).format(new Date(task.completed)) === today,
+    ),
+    totalEarned = earnings.length
+      ? earnings.reduce((sum, transaction) => sum + (transaction.amount || 0), 0)
+      : completedTasks.reduce((sum, task) => sum + (task.reward || 0), 0),
+    dailyEarned = earnings.length
+      ? earnings
+          .filter(
+            (transaction) =>
+              new Intl.DateTimeFormat("en-CA", {
+                timeZone: "Asia/Karachi",
+              }).format(new Date(transaction.createdAt)) === today,
+          )
+          .reduce((sum, transaction) => sum + (transaction.amount || 0), 0)
+      : completedToday.reduce((sum, task) => sum + (task.reward || 0), 0),
+    doneToday = data.filter((task) => task.completed).length,
+    availableToday = data.filter((task) => !task.completed).length,
+    progress = data.length ? Math.round((doneToday / data.length) * 100) : 0;
   return (
     <>
       <PageTitle
-        title="A little progress, every day."
+        title="Your progress, in motion."
         eyebrow="TASK CENTER"
-        description="One eligible task for each active plan. Rewards are confirmed by the server."
+        description="Complete your eligible tasks and watch your balance grow."
       />
-     
       <ErrorState loading={loading} error={error} />
-      <div className="task-grid">
-        {data.map((t, i) => (
-          <Card key={t._id}>
-            <div className="section-head">
-              <Tag>TASK {i + 1}</Tag>
-              <Tag>{t.completed ? "Completed" : "Available"}</Tag>
+      <div className="task-center">
+        <Card className="task-progress-card">
+          <div className="task-section-heading">
+            <div>
+              <span className="task-kicker">TODAY'S PROGRESS</span>
+              <h2>{doneToday}/{data.length || 0} completed</h2>
             </div>
-            {urls[t._id] ? (
-              <video controls playsInline src={urls[t._id]} />
-            ) : (
-              <div className="video-placeholder">
-                <img
-                  src="/images/video-task-cover.png"
-                  alt="Video task ready to watch"
-                />
-              </div>
-            )}
-            <h2>{t.task.title}</h2>
-            <p>
-              10 seconds ·{" "}
-              {t.purchase?.planType === "free"
-                ? "Rs 5–50"
-                : rupees(t.reward)}{" "}
-              reward
-            </p>
-            {t.completed && <NextTaskCountdown unlockAt={t.expires} />}
-            {!t.completed && (
-              <div className="button-row">
-                <Button secondary onClick={() => start(t)}>
-                  Start task
-                </Button>
-                <Button
-                  disabled={!started[t._id]}
-                  onClick={() =>
-                    action(() => api.post(`/tasks/${t._id}/complete`))
-                  }
-                >
-                  Complete task
-                </Button>
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
-      {!data.length && !loading && (
-        <Card>
-          <Empty
-            title="No eligible tasks right now"
-            text="Tasks appear when you have an active plan and an administrator has uploaded a video."
-            to="/plans"
-          />
+            <Tag>{progress}% done</Tag>
+          </div>
+          <div className="task-progress-stats">
+            <div>
+              <b>{availableToday}</b>
+              <span>Tasks available</span>
+              <small>Ready to watch</small>
+            </div>
+            <div>
+              <b>{availableToday}</b>
+              <span>Tasks remaining</span>
+              <small>Quota left</small>
+            </div>
+          </div>
+          <div className="task-progress-bar" aria-label={`${progress}% of today's tasks completed`}>
+            <span style={{ width: `${progress}%` }} />
+          </div>
+          <div className="task-progress-foot">
+            <span>Completed today: {doneToday}</span>
+            <span>Pending tasks: {availableToday}</span>
+          </div>
         </Card>
+
+        <div className="task-metrics">
+          <div>
+            <span>Total earned</span>
+            <b>{rupees(totalEarned)}</b>
+            <small>All time</small>
+          </div>
+          <div className="task-metric-highlight">
+            <span>Daily earnings</span>
+            <b>{rupees(dailyEarned)}</b>
+            <small>Earned today</small>
+          </div>
+          <div>
+            <span>Daily limit</span>
+            <b>{data.length}</b>
+            <small>Tasks per day</small>
+          </div>
+        </div>
+
+        {data.length ? (
+          <div className="task-list">
+            {data.map((t, i) => (
+              <Card className="task-feature-card" key={t._id}>
+                <div className="task-card-heading">
+                  <div>
+                    <span className="task-kicker">TASK {i + 1} · {t.purchase?.name || "Active plan"}</span>
+                    <h2>{t.task.title}</h2>
+                  </div>
+                  <Tag>{t.completed ? "Completed" : "Available"}</Tag>
+                </div>
+                <div className="task-reward-line">
+                  <Gift size={16} />
+                  <b>Earn {t.purchase?.planType === "free" ? "Rs 5–50" : rupees(t.reward)}</b>
+                  <span>{t.task.duration || 10}-second video</span>
+                </div>
+                {urls[t._id] ? (
+                  <video controls playsInline src={urls[t._id]} />
+                ) : (
+                  <div className="video-placeholder">
+                    <img
+                      src="/images/video-task-cover.png"
+                      alt="Video task ready to watch"
+                    />
+                    {!t.completed && (
+                      <button
+                        type="button"
+                        className="task-play-button"
+                        onClick={() => start(t)}
+                        aria-label={`Watch ${t.task.title}`}
+                      >
+                        <Play size={22} fill="currentColor" />
+                      </button>
+                    )}
+                  </div>
+                )}
+                {t.completed ? (
+                  <NextTaskCountdown unlockAt={t.expires} />
+                ) : (
+                  <div className="task-action-area">
+                    <Button
+                      onClick={async () => {
+                        if (!started[t._id]) {
+                          await start(t);
+                          return;
+                        }
+                        const result = await action(() =>
+                          api.post(`/tasks/${t._id}/complete`),
+                        );
+                        if (result) {
+                          setReward({ amount: result.reward || t.reward });
+                        }
+                      }}
+                    >
+                      {started[t._id] ? "Complete task" : "Watch now"}
+                      <ArrowRight size={16} />
+                    </Button>
+                    <small>
+                      {started[t._id]
+                        ? "Keep watching until the minimum duration is complete."
+                        : "Watch the video to unlock your reward."}
+                    </small>
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
+        ) : !loading ? (
+          <Card>
+            <Empty
+              title="No eligible tasks right now"
+              text="Tasks appear when you have an active plan and an administrator has uploaded a video."
+              to="/plans"
+            />
+          </Card>
+        ) : null}
+
+        <Card className="task-history-card">
+          <div className="task-card-heading">
+            <div>
+              <span className="task-kicker">YOUR RECORD</span>
+              <h2>Watched tasks history</h2>
+              <p>Every completed task and confirmed reward in one place.</p>
+            </div>
+            <span className="task-history-icon"><History size={19} /></span>
+          </div>
+          <div className="task-history-summary">
+            <div><span>Total watched</span><b>{completedTasks.length}</b></div>
+            <div><span>Total credited</span><b>{rupees(totalEarned)}</b></div>
+          </div>
+          {completedTasks.length ? (
+            <div className="task-history-list">
+              {completedTasks.slice(0, 10).map((task) => (
+                <div className="task-history-row" key={task._id}>
+                  <span className="task-history-check"><CheckCircle2 size={15} /></span>
+                  <div>
+                    <b>{task.task?.title || "Completed task"}</b>
+                    <small>
+                      {task.purchase?.name || "Active plan"} · {when(task.completed)}
+                    </small>
+                  </div>
+                  <strong>+{rupees(task.reward)}</strong>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Empty title="No watched tasks yet" text="Your completed tasks will appear here." />
+          )}
+        </Card>
+      </div>
+      {reward && (
+        <Modal title="Task completed!" close={() => setReward(null)} className="task-reward-modal">
+          <div className="task-reward-icon"><Award size={38} /></div>
+          <div className="task-reward-badge"><CheckCircle2 size={17} /> Task reward credited</div>
+          <h2>Congratulations!</h2>
+          <div className="task-reward-amount"><Gift size={23} /> +{rupees(reward.amount)}</div>
+          <p>Your reward has been added to your balance.</p>
+          <Button onClick={() => setReward(null)}>Claim & continue <ArrowRight size={16} /></Button>
+        </Modal>
       )}
     </>
   );
