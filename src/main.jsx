@@ -1269,7 +1269,11 @@ function Tasks() {
             )}
             <h2>{t.task.title}</h2>
             <p>
-              10 seconds · {rupees(t.reward)} reward
+              10 seconds ·{" "}
+              {t.purchase?.planType === "free"
+                ? "Rs 5–50"
+                : rupees(t.reward)}{" "}
+              reward
             </p>
             {t.completed && <NextTaskCountdown unlockAt={t.expires} />}
             {!t.completed && (
