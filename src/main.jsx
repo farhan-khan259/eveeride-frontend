@@ -1198,7 +1198,7 @@ function Tasks() {
     [urls, setUrls] = useState({}),
     [reward, setReward] = useState(null);
   const history = Array.isArray(historyResponse)
-    ? historyResponse
+    ? historyResponse.slice((historyPage - 1) * 10, historyPage * 10)
     : historyResponse.items || [];
   const historyTotal = Array.isArray(historyResponse)
     ? historyResponse.length
@@ -1451,19 +1451,26 @@ function Tasks() {
               {historyTotal > 10 && (
                 <div className="pagination task-history-pagination">
                   <span>
-                    Page {historyPage} of {Math.ceil(historyTotal / 10)}
+                    Showing {history.length} of {historyTotal} records · Page{" "}
+                    {historyPage} of {Math.ceil(historyTotal / 10)}
                   </span>
                   <Button
                     secondary
-                    disabled={historyPage === 1}
-                    onClick={() => setHistoryPage((page) => page - 1)}
+                    disabled={historyPage <= 1}
+                    onClick={() =>
+                      setHistoryPage((page) => Math.max(1, page - 1))
+                    }
                   >
                     Previous
                   </Button>
                   <Button
                     secondary
-                    disabled={historyPage * 10 >= historyTotal}
-                    onClick={() => setHistoryPage((page) => page + 1)}
+                    disabled={historyPage >= Math.ceil(historyTotal / 10)}
+                    onClick={() =>
+                      setHistoryPage((page) =>
+                        Math.min(Math.ceil(historyTotal / 10), page + 1),
+                      )
+                    }
                   >
                     Next
                   </Button>
@@ -2339,6 +2346,7 @@ const categories = [
   "registration_bonus",
   "adjustment",
 ];
+const transactionPageSize = 10;
 function Activity({ admin = false }) {
   const [filter, setFilter] = useState(""),
     [p, setP] = useState(1),
@@ -2360,6 +2368,9 @@ function Activity({ admin = false }) {
           .filter((request) => request.status === "pending")
           .map((request) => ({ ...request, kind: "Withdrawal" })),
       ].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  const totalPages = Math.max(1, Math.ceil(data.total / transactionPageSize));
+  const firstRecord = data.total ? (p - 1) * transactionPageSize + 1 : 0;
+  const lastRecord = Math.min(p * transactionPageSize, data.total);
   return (
     <>
       <PageTitle
@@ -2439,18 +2450,18 @@ function Activity({ admin = false }) {
           </section>
         )}
         {data.items.length > 0 || pendingRequests.length === 0 ? (
-          <TransactionList items={data.items} />
+          <TransactionList items={data.items.slice(0, transactionPageSize)} />
         ) : null}
         <div className="pagination">
           <span>
-            {data.total} records · Page {p}
+            Showing {firstRecord}–{lastRecord} · Page {p} of {totalPages}
           </span>
           <Button secondary disabled={p === 1} onClick={() => setP(p - 1)}>
             Previous
           </Button>
           <Button
             secondary
-            disabled={p * 20 >= data.total}
+            disabled={p >= totalPages}
             onClick={() => setP(p + 1)}
           >
             Next
@@ -2825,8 +2836,18 @@ function Auth({ register = false, admin = false }) {
       await login(r.data);
       navigate(admin ? "/admin" : "/");
     } catch (e) {
+      const statusMessage =
+        e.response?.status === 401
+          ? "Email or password is incorrect."
+          : e.response?.status === 403
+            ? "This account is suspended."
+            : e.response?.status === 429
+              ? "Too many sign-in attempts. Please wait a few minutes and try again."
+              : "";
       tell(
         e.response?.data?.message ||
+          e.response?.data?.error ||
+          statusMessage ||
           e.message ||
           "Could not connect to the backend.",
         true,
