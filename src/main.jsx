@@ -1184,8 +1184,12 @@ function Modal({ title, close, children, className = "" }) {
   );
 }
 function Tasks() {
-  const { data, loading, error } = useData("/tasks", []),
-    { data: history } = useData("/tasks/history", []),
+  const [historyPage, setHistoryPage] = useState(1),
+    { data, loading, error } = useData("/tasks", []),
+    { data: historyResponse } = useData(
+      `/tasks/history?page=${historyPage}`,
+      { items: [], total: 0 },
+    ),
     { data: taskTransactions } = useData("/transactions?category=task_earning", {
       items: [],
     }),
@@ -1193,6 +1197,12 @@ function Tasks() {
     [started, setStarted] = useState({}),
     [urls, setUrls] = useState({}),
     [reward, setReward] = useState(null);
+  const history = Array.isArray(historyResponse)
+    ? historyResponse
+    : historyResponse.items || [];
+  const historyTotal = Array.isArray(historyResponse)
+    ? historyResponse.length
+    : historyResponse.total || 0;
   useEffect(
     () => () => Object.values(urls).forEach(URL.revokeObjectURL),
     [urls],
@@ -1421,12 +1431,12 @@ function Tasks() {
             <span className="task-history-icon"><History size={19} /></span>
           </div>
           <div className="task-history-summary">
-            <div><span>Total watched</span><b>{completedTasks.length}</b></div>
+            <div><span>Total watched</span><b>{historyTotal}</b></div>
             <div><span>Total credited</span><b>{rupees(totalEarned)}</b></div>
           </div>
           {completedTasks.length ? (
             <div className="task-history-list">
-              {completedTasks.slice(0, 10).map((task) => (
+              {completedTasks.map((task) => (
                 <div className="task-history-row" key={task._id}>
                   <span className="task-history-check"><CheckCircle2 size={15} /></span>
                   <div>
@@ -1438,6 +1448,27 @@ function Tasks() {
                   <strong>+{rupees(task.reward)}</strong>
                 </div>
               ))}
+              {historyTotal > 10 && (
+                <div className="pagination task-history-pagination">
+                  <span>
+                    Page {historyPage} of {Math.ceil(historyTotal / 10)}
+                  </span>
+                  <Button
+                    secondary
+                    disabled={historyPage === 1}
+                    onClick={() => setHistoryPage((page) => page - 1)}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    secondary
+                    disabled={historyPage * 10 >= historyTotal}
+                    onClick={() => setHistoryPage((page) => page + 1)}
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <Empty title="No watched tasks yet" text="Your completed tasks will appear here." />
