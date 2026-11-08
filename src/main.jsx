@@ -66,7 +66,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { api, rupees, when, blank } from "./api.js";
-import { adminRupees } from "./format.js";
+import { adminRupees, compactRupees } from "./format.js";
 import "./styles.css";
 const Context = createContext();
 const useApp = () => useContext(Context);
@@ -1329,12 +1329,12 @@ function Tasks() {
         <div className="task-metrics">
           <div>
             <span>Total earned</span>
-            <b>{rupees(totalEarned)}</b>
+            <b>{compactRupees(totalEarned)}</b>
             <small>All time</small>
           </div>
           <div className="task-metric-highlight">
             <span>Daily earnings</span>
-            <b>{rupees(dailyEarned)}</b>
+            <b>{compactRupees(dailyEarned)}</b>
             <small>Earned today</small>
           </div>
           <div>
@@ -1357,7 +1357,7 @@ function Tasks() {
                 </div>
                 <div className="task-reward-line">
                   <Gift size={16} />
-                  <b>Earn {t.purchase?.planType === "free" ? "Rs 5–50" : rupees(t.reward)}</b>
+                  <b>Earn {t.purchase?.planType === "free" ? "Rs 5–50" : compactRupees(t.reward)}</b>
                   <span>{t.task.duration || 10}-second video</span>
                 </div>
                 {urls[t._id] ? (
@@ -1432,7 +1432,7 @@ function Tasks() {
           </div>
           <div className="task-history-summary">
             <div><span>Total watched</span><b>{historyTotal}</b></div>
-            <div><span>Total credited</span><b>{rupees(totalEarned)}</b></div>
+            <div><span>Total credited</span><b>{compactRupees(totalEarned)}</b></div>
           </div>
           {completedTasks.length ? (
             <div className="task-history-list">
@@ -1445,7 +1445,7 @@ function Tasks() {
                       {task.purchase?.name || "Active plan"} · {when(task.completed)}
                     </small>
                   </div>
-                  <strong>+{rupees(task.reward)}</strong>
+                  <strong>+{compactRupees(task.reward)}</strong>
                 </div>
               ))}
               {historyTotal > 10 && (
@@ -1480,7 +1480,7 @@ function Tasks() {
           <div className="task-reward-icon"><Award size={38} /></div>
           <div className="task-reward-badge"><CheckCircle2 size={17} /> Task reward credited</div>
           <h2>Congratulations!</h2>
-          <div className="task-reward-amount"><Gift size={23} /> +{rupees(reward.amount)}</div>
+          <div className="task-reward-amount"><Gift size={23} /> +{compactRupees(reward.amount)}</div>
           <p>Your reward has been added to your balance.</p>
           <Button onClick={() => setReward(null)}>Claim & continue <ArrowRight size={16} /></Button>
         </Modal>
