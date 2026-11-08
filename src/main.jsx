@@ -968,6 +968,12 @@ function Plans({ owned = false }) {
         <div className="plan-layout">
           <div className="plan-primary-column">
             <Card className="plan-card">
+              <div className="plan-hero-image">
+                <img
+                  src="/images/WhatsApp%20Image%202026-11-08%20at%2015.36.42.jpeg"
+                  alt="EveeRide task system for female commuters in Lahore"
+                />
+              </div>
               <div className="plan-header">
                 <span className="square-icon">
                   <Layers size={27} />
