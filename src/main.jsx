@@ -1762,16 +1762,12 @@ function Withdraw() {
   const { data: d } = useData("/dashboard", blank),
     { data: a } = useData("/payout-account", null),
     { action } = useApp(),
-    [edit, setEdit] = useState(false),
     [type, setType] = useState("EasyPaisa");
   const save = async (e) => {
     e.preventDefault();
-    if (
-      await action(() =>
-        api.put("/payout-account", Object.fromEntries(new FormData(e.target))),
-      )
-    )
-      setEdit(false);
+    await action(() =>
+      api.put("/payout-account", Object.fromEntries(new FormData(e.target))),
+    );
   };
   return (
     <>
@@ -1786,9 +1782,13 @@ function Withdraw() {
             <span>Withdrawable balance</span>
             <strong>{rupees(d.withdrawable)}</strong>
           </div>
-          {!a || edit ? (
+          {!a ? (
             <form onSubmit={save}>
               <h2>Bind your payout account</h2>
+              <p className="form-note">
+                Check these details carefully. Once saved, your payout account
+                is permanently bound and cannot be changed.
+              </p>
               <Field
                 label="Account holder name"
                 name="holder"
@@ -1843,9 +1843,6 @@ function Withdraw() {
                     {a.number} {a.bank}
                   </small>
                 </div>
-                <button className="text-link" onClick={() => setEdit(true)}>
-                  Update
-                </button>
               </div>
               <form
                 onSubmit={async (e) => {
