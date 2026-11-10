@@ -1379,8 +1379,8 @@ function Tasks() {
                 ) : (
                   <div className="video-placeholder">
                     <img
-                      src="/images/video-task-cover.png"
-                      alt="Video task ready to watch"
+                      src="/images/WhatsApp%20Image%202026-11-09%20at%2023.06.39.jpeg"
+                      alt="EveeRide — Simple Tasks, Daily Earnings, Easy Rewards"
                     />
                     {!t.completed && (
                       <button
@@ -1881,6 +1881,7 @@ function Withdraw() {
               <li>
                 Minimum withdrawal: Rs 100. Tax: 0%, where legally applicable.
               </li>
+              <li>Withdrawals are accepted from 8:00 AM until 5:00 PM.</li>
               <li>Processing target: within 24 hours.</li>
               <li>Only one pending or approved unpaid request at a time.</li>
               <li>Requested funds are reserved until paid or rejected.</li>

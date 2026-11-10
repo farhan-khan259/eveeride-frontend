@@ -6,8 +6,6 @@ dist/
 .vite/
 
 # Local environment files
-.env
-.env.*
 !.env.example
 
 # Tests and logs
@@ -21,9 +19,9 @@ pnpm-debug.log*
 # Local editor and OS files
 .DS_Store
 .idea/
-.vscode/
 *.swp
 
 # Capacitor local output
 android/
 ios/
+config.bat
