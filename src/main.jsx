@@ -751,7 +751,7 @@ function LaunchAnnouncement({ user }) {
         <div>
           <span><Clock size={18} /></span>
           <small>Launching date</small>
-          <strong>10 November 2026</strong>
+          <strong>11 November 2026</strong>
         </div>
         <div>
           <span><ArrowDownLeft size={18} /></span>
