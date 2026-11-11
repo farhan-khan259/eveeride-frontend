@@ -1680,10 +1680,11 @@ footer {
 }
 .plan-update-note small {
   margin-bottom: 4px;
-  color: #65909e;
+  color: #e00000;
   font-size: 11px;
 }
 .plan-update-note strong {
+  color: #000;
   font-size: 16px;
   line-height: 2.5;
 }
