@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node init && vite --host 0.0.0.0",
-    "build": "node init && vite build",
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
     "test": "node --test tests/*.test.js",
     "android:add": "cap add android",
     "android:sync": "cap sync android"

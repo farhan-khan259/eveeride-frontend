@@ -1902,13 +1902,6 @@ video {
   align-items: center;
   gap: 10px;
 }
-.deposit-availability-notice {
-  margin: 10px 0 0;
-  color: #c62828;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.5;
-}
 .field {
   display: flex;
   flex-direction: column;
