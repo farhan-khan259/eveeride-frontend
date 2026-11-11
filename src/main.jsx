@@ -965,7 +965,7 @@ function Plans({ owned = false }) {
     <>
       <PageTitle
         eyebrow="CHOOSE YOUR NEXT STEP"
-        title={owned ? "My product" : "A simple plan. A clear routine."}
+        title={owned ? "My product" : "A simple plan."}
         description="Understand the details before you start."
       />
       <ErrorState loading={loading} error={error} />
@@ -1305,7 +1305,7 @@ function Tasks() {
   return (
     <>
       <PageTitle
-        title="Your progress, in motion."
+        title="Your progress."
         eyebrow="TASK CENTER"
         description="Complete your eligible tasks and watch your balance grow."
       />
@@ -2514,7 +2514,7 @@ function Account() {
   }
   return (
     <>
-      <PageTitle title="Your account, at a glance." eyebrow="ACCOUNT" />
+      <PageTitle title="Your account." eyebrow="ACCOUNT" />
       <Card>
         {user ? (
           <>
