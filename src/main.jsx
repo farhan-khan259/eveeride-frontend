@@ -627,7 +627,7 @@ const WHATSAPP_CHANNEL =
     "https://whatsapp.com/channel/0029VbEJyKw2975BrU2C0a3E",
   WHATSAPP_SUPPORT = "https://wa.me/923379809499",
   SUPPORT_EMAIL = "eveerideofficial@gmail.com";
-const UPCOMING_PLAN_UNLOCK_AT = Date.parse("2026-11-10T23:59:59+05:00");
+const UPCOMING_PLAN_UNLOCK_AT = Date.parse("2026-11-16T11:20:00+05:00");
 function WhatsAppIcon({ size = 28 }) {
   return (
     <svg
