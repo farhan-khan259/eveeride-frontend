@@ -1664,9 +1664,12 @@ function Deposit() {
                   </select>
                 </Field>
                 <p className="muted small">Minimum deposit is Rs 510.00</p>
-                <Submit busy={busy}>
+                <Submit busy={busy} disabled>
                   Proceed to payment
                 </Submit>
+                <p className="deposit-availability-notice" role="status">
+                  Deposits will open tonight at 12:00 AM.
+                </p>
               </>
             ) : (
               <>
