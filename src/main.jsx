@@ -2488,6 +2488,7 @@ function Activity({ admin = false }) {
 }
 function Account() {
   const { user, action, login, impersonating } = useApp(),
+    { data: freshUser } = useData("/me", null),
     { data: planData, loading: plansLoading } = useData("/plans", {
       purchases: [],
     }),
@@ -2524,7 +2525,14 @@ function Account() {
               <ProfileAvatar user={user} large />
               <div>
                 <h2>{user.name}</h2>
-                <p>@{user.username}</p>
+                <p>
+                  Registered {freshUser?.createdAt || user.createdAt
+                    ? new Date(freshUser?.createdAt || user.createdAt).toLocaleDateString("en-PK", {
+                        timeZone: "Asia/Karachi",
+                        dateStyle: "medium",
+                      })
+                    : "—"}
+                </p>
               </div>
             </div>
             <dl className="details">
@@ -3510,16 +3518,21 @@ function AdminUsers() {
     );
     if (session && (await startImpersonation(session))) navigate("/");
   }
+  async function deleteUser(u) {
+    if (!window.confirm(`Are you sure you want to delete ${u.name}'s account?`))
+      return;
+    await action(() =>
+      api.delete(`/admin/users/${u._id}`, {
+        data: {
+          confirmation: "DELETE",
+          reason: "Admin confirmed account deletion",
+        },
+      }),
+    );
+  }
   async function submitOperation(e) {
     e.preventDefault();
     const form = Object.fromEntries(new FormData(e.currentTarget));
-    if (operation.type === "delete") {
-      const result = await action(() =>
-        api.delete(`/admin/users/${operation.user._id}`, { data: form }),
-      );
-      if (result) setOperation(null);
-      return;
-    }
     const result = await action(() =>
       api.post(`/admin/users/${operation.user._id}/adjust`, {
         ...form,
@@ -3604,7 +3617,7 @@ function AdminUsers() {
                       <Button
                         className="btn danger"
                         disabled={u.role === "admin" || u.status === "deleted"}
-                        onClick={() => setOperation({ type: "delete", user: u })}
+                        onClick={() => deleteUser(u)}
                       >
                         <Trash2 size={15} /> Delete
                       </Button>
@@ -3634,44 +3647,24 @@ function AdminUsers() {
           title={
             operation.type === "credit"
               ? `Add balance — ${operation.user.name}`
-              : operation.type === "debit"
-                ? `Remove balance — ${operation.user.name}`
-                : `Delete account — ${operation.user.name}`
+              : `Remove balance — ${operation.user.name}`
           }
           close={() => setOperation(null)}
         >
           <form onSubmit={submitOperation}>
-            {operation.type === "delete" ? (
-              <>
-                <p>
-                  The account must have a zero balance and no open payment
-                  requests. Financial and audit records will be retained.
-                </p>
-                <Field
-                  label="Type DELETE to confirm"
-                  name="confirmation"
-                  required
-                  pattern="DELETE"
-                  autoComplete="off"
-                />
-              </>
-            ) : (
-              <Field
-                label="Amount (PKR)"
-                name="amount"
-                type="number"
-                min="0.01"
-                step="0.01"
-                required
-              />
-            )}
+            <Field
+              label="Amount (PKR)"
+              name="amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+            />
             <Field label="Reason" name="reason" minLength="5" required />
             <Submit>
               {operation.type === "credit"
                 ? "Add balance"
-                : operation.type === "debit"
-                  ? "Remove balance"
-                  : "Delete account"}
+                : "Remove balance"}
             </Submit>
           </form>
         </Modal>
