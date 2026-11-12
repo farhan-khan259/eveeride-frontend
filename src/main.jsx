@@ -2148,7 +2148,7 @@ function Salary() {
       <PageTitle
         title="Every milestone deserves a moment."
         eyebrow="SALARY REWARDS"
-        description="Ten repeatable levels. Each cycle counts new approved team deposits for ten days, then resets."
+        description="Ten repeatable levels. Each cycle counts new approved direct-referral deposits for ten days, then resets."
       />
       <div className="info-strip salary-cycle-summary">
         <span className="salary-cycle-icon">
@@ -2162,7 +2162,7 @@ function Salary() {
           <small>Cycle ends in</small>
           <b>{countdown(data.cycleEndsAt, now + offset)}</b>
         </div>
-        <p>Approved deposits from up to four referral levels are included.</p>
+        <p>Approved deposits from direct level-one referrals are included.</p>
       </div>
       <ErrorState error={error} />
       <div className="salary-grid">
