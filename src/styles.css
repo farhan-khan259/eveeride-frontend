@@ -1721,6 +1721,11 @@ footer {
 .plan-card h2 {
   font-size: 29px;
 }
+.plan-card h2.plan-name-display {
+  font-size: 24px;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
 .plan-card > p {
   font-size: 14px;
 }

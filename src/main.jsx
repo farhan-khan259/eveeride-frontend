@@ -673,43 +673,40 @@ function WhatsAppChannel({ promo = false }) {
     </a>
   );
 }
-function PlanTwoTimer({ expires }) {
+function PlanThreeCountdown() {
+  const storageKey = "eveeride.plan3.launchAt";
+  const [launchAt] = useState(() => {
+    const saved = Number(localStorage.getItem(storageKey));
+    if (saved > Date.now()) return saved;
+    const next = Date.now() + 5 * 86400000;
+    localStorage.setItem(storageKey, String(next));
+    return next;
+  });
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
-  const hasActivePlan = expires && Date.parse(expires) > now,
-    remaining = hasActivePlan
-      ? Math.max(0, Date.parse(expires) - now)
-      : 35 * 86400000,
-    days = Math.floor(remaining / 86400000),
-    hours = Math.floor(remaining / 3600000) % 24,
-    minutes = Math.floor(remaining / 60000) % 60,
-    seconds = Math.floor(remaining / 1000) % 60;
+  const remaining = Math.max(0, launchAt - now);
+  const parts = [
+    [Math.floor(remaining / 86400000), "Days"],
+    [Math.floor(remaining / 3600000) % 24, "Hours"],
+    [Math.floor(remaining / 60000) % 60, "Min"],
+    [Math.floor(remaining / 1000) % 60, "Sec"],
+  ];
   return (
-    <section className="plan-two-timer" aria-live="polite">
-      <div>
-        <span className="eyebrow">PLAN 2 TIMER</span>
-        <strong>{hasActivePlan ? "Time remaining" : "Starts after activation"}</strong>
-        <small>
-          {hasActivePlan
-            ? "Your 35-day Plan 2 period is active."
-            : "Activate Plan 2 to start your 35-day task journey."}
-        </small>
+    <section className="upcoming-plan plan-three-countdown">
+      <div className="upcoming-plan-icon"><Lock size={25} /></div>
+      <div className="upcoming-plan-copy">
+        <span className="eyebrow">UPCOMING · PLAN 3</span>
+        <h2>EveeRide Horizon</h2>
+        <p>A new reward journey is preparing for launch. Plan details will unlock when the countdown ends.</p>
       </div>
-      <div className="countdown-grid" aria-label={`${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`}>
-        {[
-          [days, "Days"],
-          [hours, "Hours"],
-          [minutes, "Min"],
-          [seconds, "Sec"],
-        ].map(([value, label]) => (
-          <span key={label}>
-            <b>{String(value).padStart(2, "0")}</b>
-            <small>{label}</small>
-          </span>
-        ))}
+      <div className="upcoming-plan-status">
+        <span className="upcoming-plan-lock">Launches in</span>
+        <div className="countdown-grid" aria-label={`${parts[0][0]} days remaining`}>
+          {parts.map(([value, label]) => <span key={label}><b>{String(value).padStart(2, "0")}</b><small>{label}</small></span>)}
+        </div>
       </div>
     </section>
   );
@@ -918,16 +915,15 @@ function Dashboard() {
 }
 function Plans({ owned = false }) {
   const { data, loading, error } = useData("/plans", {
+      plans: [{ id: "plan1", name: "EVEERIDE — STARTER PLAN", price: 51000, reward: 3400, dailyTasks: 1, days: 35, maxPurchases: 3 }, { id: "plan2", name: "EVEERIDE — SCUBE JOURNEY", price: 102000, reward: 8000, dailyTasks: 1, days: 35, maxPurchases: 2 }],
       plan: {
-        name: "EveeRide Scube Journey — Plan 2",
-        price: 102000,
-        reward: 8000,
+        id: "plan1", name: "EVEERIDE — STARTER PLAN", price: 51000, reward: 3400,
         dailyTasks: 1,
         days: 35,
         maxPurchases: 2,
       },
       freePlan: {
-        name: "EveeRide FREE PLAN",
+        name: "EVEERIDE — FREE PLAN",
         price: 0,
         reward: 500,
         dailyTasks: 1,
@@ -939,22 +935,15 @@ function Plans({ owned = false }) {
       subscribers: 0,
     }),
     { pub, action } = useApp();
-  const plan = data.plan || pub?.plan || {
-    name: "EveeRide Scube Journey — Plan 2",
-    price: 102000,
-    reward: 8000,
-    dailyTasks: 1,
-    days: 35,
-    maxPurchases: 2,
-  };
+  const plans = data.plans || [data.plan || pub?.plan];
+  const plan = plans.find((item) => item.id === "plan1") || plans[0];
+  const plan2 = plans.find((item) => item.id === "plan2") || { id: "plan2", name: "EVEERIDE — SCUBE JOURNEY", price: 102000, reward: 8000, dailyTasks: 1, days: 35, maxPurchases: 2 };
   const freePlan = data.freePlan;
   const paidPurchases = data.purchases.filter(
     (purchase) => purchase.planType !== "free",
   );
-  const activePlan = paidPurchases.find(
-    (purchase) => Date.parse(purchase.expires) > Date.now(),
-  );
-  const [confirm, setConfirm] = useState(false),
+  const planPurchases = (planId) => paidPurchases.filter((purchase) => (purchase.planId || "plan1") === planId);
+  const [confirm, setConfirm] = useState(null),
     [buying, setBuying] = useState(false),
     [activatingFree, setActivatingFree] = useState(false);
   return (
@@ -1005,7 +994,7 @@ function Plans({ owned = false }) {
                   </span>
                   <Tag>FREE PLAN</Tag>
                 </div>
-                <h2>{freePlan.name}</h2>
+                <h2 className="plan-name-display">{freePlan.name}</h2>
                 <p>Activate free and start your daily task journey.</p>
                 <div className="plan-price free-plan-price">
                   FREE
@@ -1042,6 +1031,15 @@ function Plans({ owned = false }) {
               </Card>
             )}
             <Card className="plan-card">
+              <div className="plan-hero-image"><img src="/images/WhatsApp%20Image%202026-11-08%20at%2015.36.42.jpeg" alt="EveeRide Starter Plan" /></div>
+              <div className="plan-header"><span className="square-icon"><Layers size={27} /></span><Tag>PLAN 1</Tag></div>
+              <h2>{plan.name}</h2><p>Start with one daily task.</p>
+              <div className="plan-price">{(plan.price / 100).toLocaleString("en-PK")} PKR<span>/ {plan.days} days</span></div>
+              <div className="plan-details">{[["Daily tasks", `${plan.dailyTasks} per day`], ["Reward per completed task", rupees(plan.reward)], ["Plan duration", `${plan.days} days`], ["Total eligible tasks", String(plan.dailyTasks * plan.days)], ["Total possible task rewards", rupees(plan.reward * plan.dailyTasks * plan.days)], ["Maximum purchases", `${plan.maxPurchases} per account`]].map(([a, b]) => <div key={a}><span>{a}</span><b>{b}</b></div>)}</div>
+              <div className="purchase-meter"><span>Your purchase count</span><b>{planPurchases("plan1").length}/{plan.maxPurchases} purchases</b></div>
+              <Button disabled={planPurchases("plan1").length >= plan.maxPurchases} onClick={() => setConfirm(plan)}>{planPurchases("plan1").length >= plan.maxPurchases ? "Purchase limit reached" : "Activate Plan 1"}<ArrowRight size={17} /></Button>
+            </Card>
+            <Card className="plan-card">
               <div className="plan-hero-image">
                 <img
                   src="/images/plan2.jpeg"
@@ -1054,20 +1052,20 @@ function Plans({ owned = false }) {
                 </span>
                 <Tag>PLAN 2</Tag>
               </div>
-              <h2>{plan.name}</h2>
+              <h2 className="plan-name-display">{plan2.name}</h2>
               <p>One daily task. A 35-day reward journey.</p>
               <div className="plan-price">
-                {(plan.price / 100).toLocaleString("en-PK")} PKR
-                <span>/ {plan.days} days</span>
+                {(plan2.price / 100).toLocaleString("en-PK")} PKR
+                <span>/ {plan2.days} days</span>
               </div>
               <div className="plan-details">
                 {[
-                  ["Daily tasks", `${plan.dailyTasks} per day`],
-                  ["Reward per completed task", rupees(plan.reward)],
-                  ["Plan duration", `${plan.days} days`],
-                  ["Total eligible tasks", String(plan.dailyTasks * plan.days)],
-                  ["Total possible task rewards", rupees(plan.reward * plan.dailyTasks * plan.days)],
-                  ["Maximum purchases", `${plan.maxPurchases} per account`],
+                  ["Daily tasks", `${plan2.dailyTasks} per day`],
+                  ["Reward per completed task", rupees(plan2.reward)],
+                  ["Plan duration", `${plan2.days} days`],
+                  ["Total eligible tasks", String(plan2.dailyTasks * plan2.days)],
+                  ["Total possible task rewards", rupees(plan2.reward * plan2.dailyTasks * plan2.days)],
+                  ["Maximum purchases", `${plan2.maxPurchases} per account`],
                 ].map(([a, b]) => (
                   <div key={a}>
                     <span>{a}</span>
@@ -1077,19 +1075,19 @@ function Plans({ owned = false }) {
               </div>
               <div className="purchase-meter">
                 <span>Your purchase count</span>
-                <b>{paidPurchases.length}/{plan.maxPurchases} purchases</b>
+                <b>{planPurchases("plan2").length}/{plan2.maxPurchases} purchases</b>
               </div>
               <Button
-                disabled={paidPurchases.length >= plan.maxPurchases}
-                onClick={() => setConfirm(true)}
+                disabled={planPurchases("plan2").length >= plan2.maxPurchases}
+                onClick={() => setConfirm(plan2)}
               >
-                {paidPurchases.length >= plan.maxPurchases
+                {planPurchases("plan2").length >= plan2.maxPurchases
                   ? "Purchase limit reached"
                   : "Activate Plan 2"}
                 <ArrowRight size={17} />
               </Button>
             </Card>
-            <PlanTwoTimer expires={activePlan?.expires} />
+            <PlanThreeCountdown />
             <div className="plan-update-note" lang="ur" dir="rtl">
               <div>
                 <small>نئے پلان کی تازہ کاری</small>
@@ -1144,21 +1142,20 @@ function Plans({ owned = false }) {
         </div>
       )}
       {confirm && (
-        <Modal title="Activate Plan 2?" close={() => setConfirm(false)}>
+        <Modal title={`Activate ${confirm.name}?`} close={() => setConfirm(null)}>
           <p>
-            {rupees(plan.price)} will be deducted from your available balance.{" "}
-            The plan lasts {plan.days} days and includes {plan.dailyTasks} eligible
-            daily {plan.dailyTasks === 1 ? "task" : "tasks"}.
+            {rupees(confirm.price)} will be deducted from your available balance.{" "}
+            The plan lasts {confirm.days} days and includes {confirm.dailyTasks} eligible daily tasks.
           </p>
           <Button
             disabled={buying}
             onClick={async () => {
               setBuying(true);
               await action(() =>
-                api.post("/plans/purchase", { requestId: crypto.randomUUID() }),
+                api.post("/plans/purchase", { requestId: crypto.randomUUID(), planId: confirm.id }),
               );
               setBuying(false);
-              setConfirm(false);
+              setConfirm(null);
             }}
           >
             Confirm activation
