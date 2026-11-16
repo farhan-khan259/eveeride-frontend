@@ -1623,6 +1623,27 @@ footer {
 .plan-primary-column > .plan-card {
   margin-bottom: 0;
 }
+.plan-two-timer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 18px 20px;
+  border: 1px solid #d9c6ee;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fbf8ff, #f3edff);
+}
+.plan-two-timer strong,
+.plan-two-timer small { display: block; }
+.plan-two-timer strong {
+  margin: 4px 0;
+  color: #54217f;
+  font-size: 16px;
+}
+.plan-two-timer small { color: #6c5b79; }
+.plan-two-timer .countdown-grid { min-width: 290px; }
+.plan-two-timer .countdown-grid b { color: #67239b; }
 .plan-primary-column > .upcoming-plan {
   width: 100%;
   margin-top: 18px;
@@ -3886,6 +3907,12 @@ td small {
   }
   .plan-layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .plan-two-timer {
+    grid-template-columns: 1fr;
+  }
+  .plan-two-timer .countdown-grid {
+    min-width: 0;
   }
   .plan-card {
     padding: 22px;
