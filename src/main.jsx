@@ -674,7 +674,7 @@ function WhatsAppChannel({ promo = false }) {
   );
 }
 function PlanThreeCountdown() {
-  const storageKey = "eveeride.plan3.launchAt";
+  const storageKey = "eveeride.plan3.launchAt.v2";
   const [launchAt] = useState(() => {
     const saved = Number(localStorage.getItem(storageKey));
     if (saved > Date.now()) return saved;
