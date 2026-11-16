@@ -6,7 +6,6 @@ dist/
 .vite/
 
 # Local environment files
-.env
 !.env.example
 
 # Tests and logs

@@ -1646,8 +1646,6 @@ function Deposit() {
                     <option value="">Select a method</option>
                     {[
                       ["EasyPaisa", "EasyPaisa"],
-                      ["JazzCash", "JazzCash"],
-                      ["Mashreq", "Bank Account"],
                     ].map(([value, label]) => (
                       <option key={value} value={value}>
                         {label}
@@ -4020,7 +4018,7 @@ function AdminPayments() {
             action(() => api.put("/admin/payments", v));
           }}
         >
-          {["EasyPaisa", "JazzCash", "Mashreq"].map((m) => (
+          {["EasyPaisa"].map((m) => (
             <fieldset key={m}>
               <legend>{m}</legend>
               <Field
