@@ -1644,9 +1644,7 @@ function Deposit() {
                 <Field label="Payment method">
                   <select name="method" required>
                     <option value="">Select a method</option>
-                    {[
-                      ["EasyPaisa", "EasyPaisa"],
-                    ].map(([value, label]) => (
+                    {[["Mashreq", "Mashreq Bank"]].map(([value, label]) => (
                       <option key={value} value={value}>
                         {label}
                         {!p.methods[value] ? " · not configured" : ""}
@@ -1672,7 +1670,7 @@ function Deposit() {
                     [
                       "Payment method",
                       order.order.method === "Mashreq"
-                        ? "Bank Account"
+                        ? "Mashreq Bank"
                         : order.order.method,
                       false,
                     ],
@@ -4008,7 +4006,7 @@ function AdminPayments() {
             e.preventDefault();
             const f = new FormData(e.target),
               v = {};
-            for (const m of ["EasyPaisa", "JazzCash", "Mashreq"])
+            for (const m of ["Mashreq"])
               v[m] = {
                 title: f.get(m + "title"),
                 number: f.get(m + "number"),
@@ -4018,7 +4016,7 @@ function AdminPayments() {
             action(() => api.put("/admin/payments", v));
           }}
         >
-          {["EasyPaisa"].map((m) => (
+          {["Mashreq"].map((m) => (
             <fieldset key={m}>
               <legend>{m}</legend>
               <Field
